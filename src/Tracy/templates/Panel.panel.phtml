@@ -1,0 +1,45 @@
+<?php declare(strict_types=1);
+
+namespace Forrest79\PhPgSql\Tracy;
+
+?>
+<style class="tracy-debug">
+	#tracy-debug td.nette-DbPanel-sql { background: white !important }
+	#tracy-debug .nette-DbPanel-binded td { white-space: pre }
+</style>
+
+<h1>Queries: <?php echo $count, ($totalTime ? sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
+
+<div class="tracy-inner">
+	<table>
+		<tr><th>Time&nbsp;ms</th><th>SQL Query</th><th>Params</th></tr>
+		<?php
+		foreach ($queries as $query):
+			[$sql, $params, $bindedSql, $time] = $query;
+		?>
+		<tr>
+		<td>
+		<?php if ($time === FALSE): echo '-'; elseif ($time !== NULL): echo sprintf('%0.3f', $time * 1000); else: echo '<em>async</em>'; endif ?>
+		<?php if ($bindedSql): ?>
+			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .nette-DbPanel-binded">binded</a>
+		<?php endif ?>
+		</td>
+		<td class="nette-DbPanel-sql"><?= $sql ?>
+		<?php if ($bindedSql): ?>
+			<table class="tracy-collapsed nette-DbPanel-binded">
+			<tr>
+				<th>Binded query:</th>
+			</tr>
+			<tr>
+				<td><?= $bindedSql ?></td>
+			</tr>
+			</table>
+		<?php endif ?>
+		</td>
+		<td>
+		<?= $params ?>
+		</td>
+		</tr>
+		<?php endforeach ?>
+	</table>
+</div>

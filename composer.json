@@ -1,0 +1,30 @@
+{
+	"name": "forrest79/phpgsql-nette",
+	"type": "library",
+	"require": {
+		"php":  ">=7.1",
+		"forrest79/phpgsql-db": "dev-master",
+		"nette/di":  "^2.4",
+		"tracy/tracy":  "^2.4"
+	},
+	"require-dev": {
+		"nette/tester": "~2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Forrest79\\PhPgSql\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Jakub Trmota",
+			"email": "jakub@trmota.cz"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/forrest79/PhPgSql-Db.git"
+		}
+	]
+}
