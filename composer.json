@@ -1,6 +1,9 @@
 {
 	"name": "forrest79/phpgsql-nette",
+	"description": "PhPgSql implementation into Nette Framework.",
+	"keywords": ["nette", "phpgsql", "database", "postgresql"],
 	"type": "library",
+	"license": "BSD-3-Clause",
 	"require": {
 		"php":  ">=7.1",
 		"forrest79/phpgsql": "dev-master",
