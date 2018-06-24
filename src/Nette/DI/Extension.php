@@ -9,12 +9,14 @@ use Tracy;
 class Extension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
+		'connectionClass' => PhPgSql\Fluent\Connection::class,
 		'config' => NULL,
 		'forceNew' => FALSE,
 		'async' => FALSE,
 		'asyncWaitSeconds' => NULL,
 		'lazy' => TRUE,
 		'debugger' => TRUE,
+		'autowired' => TRUE,
 	];
 
 	/** @var bool */
@@ -38,7 +40,6 @@ class Extension extends Nette\DI\CompilerExtension
 		}
 
 		$defaults = $this->defaults;
-		$defaults['autowired'] = TRUE;
 		foreach ((array) $configs as $name => $config) {
 			if (!is_array($config)) {
 				continue;
@@ -54,7 +55,11 @@ class Extension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$connectionClass = class_exists(PhPgSql\Fluent\Connection::class) ? PhPgSql\Fluent\Connection::class : PhPgSql\Db\Connection::class;
+		$connectionClass = $config['connectionClass'];
+
+		if (!is_subclass_of($connectionClass, PhPgSql\Db\Connection::class)) {
+			throw new \InvalidArgumentException(sprintf('Parameter \'connectionClass\' must extends \'%s\'', PhPgSql\Db\Connection::class));
+		}
 
 		$connection = $builder->addDefinition($this->prefix("$name.connection"))
 			->setFactory($connectionClass, [$config['config'], $config['forceNew'], $config['async']])
