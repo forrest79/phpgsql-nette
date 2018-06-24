@@ -3,7 +3,7 @@
 	"type": "library",
 	"require": {
 		"php":  ">=7.1",
-		"forrest79/phpgsql-db": "dev-master",
+		"forrest79/phpgsql": "dev-master",
 		"nette/di":  "^2.4",
 		"tracy/tracy":  "^2.4"
 	},
@@ -24,7 +24,7 @@
 	"repositories": [
 		{
 			"type": "vcs",
-			"url": "https://github.com/forrest79/PhPgSql-Db.git"
+			"url": "https://github.com/forrest79/PhPgSql.git"
 		}
 	]
 }
