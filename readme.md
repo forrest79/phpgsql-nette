@@ -45,8 +45,8 @@ database:
 	forceNew: yes # default is no
 	async: yes # default is no
 	lazy: no # default is yes
-	debugger: no # default is yes
 	autowired: no # default is yes (for second and next connection is always no)
+	debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
 ```
 
 Or multiple connections:

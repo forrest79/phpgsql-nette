@@ -15,15 +15,15 @@ class Extension extends Nette\DI\CompilerExtension
 		'async' => FALSE,
 		'asyncWaitSeconds' => NULL,
 		'lazy' => TRUE,
-		'debugger' => TRUE,
 		'autowired' => TRUE,
+		'debugger' => TRUE,
 	];
 
 	/** @var bool */
 	private $debugMode;
 
 
-	public function __construct(bool $debugMode = FALSE)
+	public function __construct(bool $debugMode)
 	{
 		$this->debugMode = $debugMode;
 	}
