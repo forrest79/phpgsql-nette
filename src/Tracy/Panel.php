@@ -44,7 +44,7 @@ class Panel implements Tracy\IBarPanel
 			return;
 		}
 
-		$this->queries[] = ['<em>[CONNECT]</em>', NULL, NULL, FALSE];
+		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CONNECT]</strong></pre>', NULL, NULL, FALSE];
 	}
 
 
@@ -54,7 +54,7 @@ class Panel implements Tracy\IBarPanel
 			return;
 		}
 
-		$this->queries[] = ['<em>[CLOSE]</em>', NULL, NULL, FALSE];
+		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CLOSE]</strong></pre>', NULL, NULL, FALSE];
 	}
 
 
@@ -70,9 +70,10 @@ class Panel implements Tracy\IBarPanel
 			$this->totalTime += $time;
 		}
 
+		$params = $query->getParams();
 		$this->queries[] = [
 			PhPgSql\Db\Helper::dump($query->getSql()),
-			Tracy\Debugger::dump($query->getParams(), TRUE),
+			$params ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
 			PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()),
 			$time,
 		];
@@ -99,11 +100,12 @@ class Panel implements Tracy\IBarPanel
 		}
 
 		$parameters = '';
-		if ($query->getParams()) {
+		$params = $query->getParams();
+		if ($params) {
 			$parameters = sprintf('
 				<h3>Parameters:</h3>
 				<pre>%s</pre>
-			', Tracy\Debugger::dump($query->getParams(), TRUE));
+			', Tracy\Debugger::dump(self::printParams($params), TRUE));
 		}
 
 		return [
@@ -118,6 +120,16 @@ class Panel implements Tracy\IBarPanel
 				<pre>%s</pre>
 			', PhPgSql\Db\Helper::dump($query->getSql()), $parameters, PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams())),
 		];
+	}
+
+
+	private static function printParams(array $params): array
+	{
+		$keys = range(1, count($params));
+		array_walk($keys, function(&$value) {
+			$value = '$' . $value;
+		});
+		return array_combine($keys, array_values($params));
 	}
 
 
