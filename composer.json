@@ -6,7 +6,7 @@
 	"license": "BSD-3-Clause",
 	"require": {
 		"php":  ">=7.1",
-		"forrest79/phpgsql": "dev-master",
+		"forrest79/phpgsql": "^0.1.0",
 		"nette/di":  "^2.4",
 		"tracy/tracy":  "^2.4"
 	},
@@ -22,12 +22,6 @@
 		{
 			"name": "Jakub Trmota",
 			"email": "jakub@trmota.cz"
-		}
-	],
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/forrest79/PhPgSql.git"
 		}
 	]
 }
