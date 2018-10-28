@@ -17,7 +17,7 @@ Installation
 
 The recommended way to install PhPgSql - Nette is through Composer:
 
-```
+```sh
 composer require forrest79/phpgsql-nette --dev
 ```
 
