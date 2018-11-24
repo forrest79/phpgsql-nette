@@ -1,0 +1,10 @@
+includes:
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+	level: max
+	fileExtensions:
+		- php
+		- phpt
+	autoload_directories:
+		- %rootDir%/../../../tests

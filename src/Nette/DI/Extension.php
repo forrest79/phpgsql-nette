@@ -8,6 +8,7 @@ use Tracy;
 
 class Extension extends Nette\DI\CompilerExtension
 {
+	/** @var array */
 	public $defaults = [
 		'connectionClass' => PhPgSql\Fluent\Connection::class,
 		'config' => NULL,
@@ -29,6 +30,9 @@ class Extension extends Nette\DI\CompilerExtension
 	}
 
 
+	/**
+	 * @return void
+	 */
 	public function loadConfiguration()
 	{
 		$configs = $this->getConfig();
@@ -40,7 +44,7 @@ class Extension extends Nette\DI\CompilerExtension
 		}
 
 		$defaults = $this->defaults;
-		foreach ((array) $configs as $name => $config) {
+		foreach ($configs as $name => $config) {
 			if (!is_array($config)) {
 				continue;
 			}

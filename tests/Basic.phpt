@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Unit\Db;
 
 use Forrest79\PhPgSql;
 use Nette\DI;
@@ -14,7 +14,7 @@ require_once __DIR__ . '/bootstrap.php';
 class Basic extends Tester\TestCase
 {
 
-	public function testBasic()
+	public function testBasic(): void
 	{
 		$loader = new DI\Config\Loader;
 		$config = $loader->load(Tester\FileMock::create('

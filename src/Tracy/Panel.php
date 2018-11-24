@@ -3,6 +3,7 @@
 namespace Forrest79\PhPgSql\Tracy;
 
 use Forrest79\PhPgSql;
+use Nette;
 use Tracy;
 
 class Panel implements Tracy\IBarPanel
@@ -13,7 +14,7 @@ class Panel implements Tracy\IBarPanel
 	/** @var string */
 	private $name;
 
-	/** @var int */
+	/** @var float */
 	private $totalTime = 0;
 
 	/** @var int */
@@ -66,14 +67,14 @@ class Panel implements Tracy\IBarPanel
 
 		$this->count++;
 
-		if ($time) {
+		if ($time !== NULL) {
 			$this->totalTime += $time;
 		}
 
 		$params = $query->getParams();
 		$this->queries[] = [
 			PhPgSql\Db\Helper::dump($query->getSql()),
-			$params ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
+			count($params) > 0 ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
 			PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()),
 			$time,
 		];
@@ -101,7 +102,7 @@ class Panel implements Tracy\IBarPanel
 
 		$parameters = '';
 		$params = $query->getParams();
-		if ($params) {
+		if (count($params) > 0) {
 			$parameters = sprintf('
 				<h3>Parameters:</h3>
 				<pre>%s</pre>
@@ -129,7 +130,11 @@ class Panel implements Tracy\IBarPanel
 		array_walk($keys, function(&$value) {
 			$value = '$' . $value;
 		});
-		return array_combine($keys, array_values($params));
+		$paramsToPrint = array_combine($keys, array_values($params));
+		if ($paramsToPrint === FALSE) {
+			throw new Nette\InvalidArgumentException();
+		}
+		return $paramsToPrint;
 	}
 
 
@@ -140,13 +145,13 @@ class Panel implements Tracy\IBarPanel
 		$totalTime = $this->totalTime;
 		ob_start(function () {});
 		require __DIR__ . '/templates/Panel.tab.phtml';
-		return ob_get_clean();
+		return ob_get_clean() ?: '';
 	}
 
 
 	public function getPanel(): ?string
 	{
-		if (!$this->count) {
+		if ($this->count > 0) {
 			return NULL;
 		}
 
@@ -157,7 +162,7 @@ class Panel implements Tracy\IBarPanel
 
 		ob_start(function () {});
 		require __DIR__ . '/templates/Panel.panel.phtml';
-		return ob_get_clean();
+		return ob_get_clean() ?: '';
 	}
 
 }

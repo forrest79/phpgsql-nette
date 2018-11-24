@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Unit\PhPgSql\Db;
 
 use Forrest79\PhPgSql;
 use Nette\DI;
@@ -14,7 +14,7 @@ require_once __DIR__ . '/bootstrap.php';
 class Multiple extends Tester\TestCase
 {
 
-	public function testBasic()
+	public function testBasic(): void
 	{
 		$loader = new DI\Config\Loader;
 		$config = $loader->load(Tester\FileMock::create('
@@ -32,9 +32,10 @@ class Multiple extends Tester\TestCase
 
 		$compiler = new DI\Compiler;
 		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(FALSE));
-		eval($compiler->addConfig($config)->setClassName('Container1')->compile());
+		$containerName = 'Container' . uniqid();
+		eval($compiler->addConfig($config)->setClassName($containerName)->compile());
 
-		$container = new \Container1;
+		$container = new $containerName();
 		$container->initialize();
 
 		$connection = $container->getService('database.first.connection');

@@ -4,6 +4,12 @@
 	"keywords": ["nette", "phpgsql", "database", "postgresql"],
 	"type": "library",
 	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Jakub Trmota",
+			"email": "jakub@trmota.cz"
+		}
+	],
 	"require": {
 		"php":  ">=7.1",
 		"forrest79/phpgsql": "^0.2.0",
@@ -11,17 +17,13 @@
 		"tracy/tracy":  "^2.4"
 	},
 	"require-dev": {
-		"nette/tester": "~2"
+		"nette/tester": "~2",
+		"phpstan/phpstan": "^0.10.5",
+		"phpstan/phpstan-strict-rules": "^0.10.1"
 	},
 	"autoload": {
 		"psr-4": {
 			"Forrest79\\PhPgSql\\": "src/"
 		}
-	},
-	"authors": [
-		{
-			"name": "Jakub Trmota",
-			"email": "jakub@trmota.cz"
-		}
-	]
+	}
 }
