@@ -1,19 +1,16 @@
-PhPgSql - Nette
-===============
+# PhPgSql - Nette
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/forrest79/PhPgSql-Nette/blob/master/license.md)
 [![Build Status](https://travis-ci.org/forrest79/PhPgSql-Nette.svg?branch=master)](https://travis-ci.org/forrest79/PhPgSql-Nette)
 
 Use PhPgSql with Nette Framework.
 
-Introduction
-------------
+## Introduction
 
 Nette extension to easy use PhPgSql in Nette application.
 
 
-Installation
-------------
+## Installation
 
 The recommended way to install PhPgSql - Nette is through Composer:
 
@@ -24,8 +21,7 @@ composer require forrest79/phpgsql-nette --dev
 PhPgSql requires PHP 7.1.0 and pgsql binary extension.
 
 
-Using
------
+## Using
 
 First, register extension in neon configuration:
 
