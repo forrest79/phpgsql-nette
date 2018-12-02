@@ -151,7 +151,7 @@ class Panel implements Tracy\IBarPanel
 
 	public function getPanel(): ?string
 	{
-		if ($this->count > 0) {
+		if ($this->count === 0) {
 			return NULL;
 		}
 
