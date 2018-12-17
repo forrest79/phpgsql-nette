@@ -27,31 +27,31 @@ First, register extension in neon configuration:
 
 ```yaml
 extensions:
-	database: Forrest79\PhPgSql\Nette\DI\Extension(%debugMode%)
+    database: Forrest79\PhPgSql\Nette\DI\Extension(%debugMode%)
 ```
 
 Than, register connection (one connection is as default):
 
 ```yaml
 database:
-	config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
-	connectionClass: '\Forrest79\PhPgSql\Fluent\Connection', # you can change connection class, ie basic \Forrest79\PhPgSql\DB\Connection or your own, but every connection class must extends \Forrest79\PhPgSql\Fluent\Connection 
-	asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
-	forceNew: yes # default is no
-	async: yes # default is no
-	lazy: no # default is yes
-	autowired: no # default is yes (for second and next connection is always no)
-	debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
+    config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
+    connectionClass: '\Forrest79\PhPgSql\Fluent\Connection', # you can change connection class, ie basic \Forrest79\PhPgSql\DB\Connection or your own, but every connection class must extends \Forrest79\PhPgSql\Fluent\Connection 
+    asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
+    forceNew: yes # default is no
+    async: yes # default is no
+    lazy: no # default is yes
+    autowired: no # default is yes (for second and next connection is always no)
+    debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
 ```
 
 Or multiple connections:
 
 ```yaml
 database:
-	first:
-		config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
-	second:
-		config: 'host=localhost port=5433 user=postgres password=postgres dbname=postgres'
+    first:
+        config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
+    second:
+        config: 'host=localhost port=5433 user=postgres password=postgres dbname=postgres'
 ```
 
 First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. Or can be get by:
