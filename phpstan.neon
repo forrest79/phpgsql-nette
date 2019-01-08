@@ -3,8 +3,3 @@ includes:
 
 parameters:
 	level: max
-	fileExtensions:
-		- php
-		- phpt
-	autoload_directories:
-		- %rootDir%/../../../tests

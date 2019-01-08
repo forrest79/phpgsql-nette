@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Forrest79\PhPgSql\Tests\Unit\Db;
+namespace Forrest79\PhPgSql\Tests;
 
 use Forrest79\PhPgSql;
 use Nette\DI;
@@ -11,7 +11,7 @@ require_once __DIR__ . '/bootstrap.php';
 /**
  * @testCase
  */
-class Basic extends Tester\TestCase
+class BasicTest extends Tester\TestCase
 {
 
 	public function testBasic(): void
@@ -37,4 +37,4 @@ class Basic extends Tester\TestCase
 
 }
 
-(new Basic)->run();
+(new BasicTest)->run();
