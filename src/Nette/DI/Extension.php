@@ -15,6 +15,9 @@ class Extension extends Nette\DI\CompilerExtension
 		'forceNew' => FALSE,
 		'async' => FALSE,
 		'asyncWaitSeconds' => NULL,
+		'defaultRowFactory' => NULL,
+		'dataTypeParser' => NULL,
+		'dataTypeCache' => NULL,
 		'lazy' => TRUE,
 		'autowired' => TRUE,
 		'debugger' => TRUE,
@@ -71,6 +74,18 @@ class Extension extends Nette\DI\CompilerExtension
 
 		if ($config['asyncWaitSeconds'] !== NULL) {
 			$connection->addSetup('setConnectAsyncWaitSeconds', [$config['asyncWaitSeconds']]);
+		}
+
+		if ($config['defaultRowFactory'] !== NULL) {
+			$connection->addSetup('setDefaultRowFactory', [$config['defaultRowFactory']]);
+		}
+
+		if ($config['dataTypeParser'] !== NULL) {
+			$connection->addSetup('setDataTypeParser', [$config['dataTypeParser']]);
+		}
+
+		if ($config['dataTypeCache'] !== NULL) {
+			$connection->addSetup('setDataTypeCache', [$config['dataTypeCache']]);
 		}
 
 		if ($config['debugger']) {
