@@ -12,14 +12,14 @@
 	],
 	"require": {
 		"php":  ">=7.1",
-		"forrest79/phpgsql": "^0.4.2",
+		"forrest79/phpgsql": "^0.5",
 		"nette/di":  "^2.4",
 		"tracy/tracy":  "^2.4"
 	},
 	"require-dev": {
 		"nette/tester": "~2",
-		"phpstan/phpstan": "^0.10.8",
-		"phpstan/phpstan-strict-rules": "^0.10.1"
+		"phpstan/phpstan": "^0.11",
+		"phpstan/phpstan-strict-rules": "^0.11"
 	},
 	"autoload": {
 		"psr-4": {

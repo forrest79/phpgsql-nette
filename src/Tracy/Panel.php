@@ -149,10 +149,10 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
-	public function getPanel(): ?string
+	public function getPanel(): string
 	{
 		if ($this->count === 0) {
-			return NULL;
+			return '';
 		}
 
 		$name = $this->name;
