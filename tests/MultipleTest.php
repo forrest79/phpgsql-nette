@@ -16,7 +16,7 @@ class MultipleTest extends Tester\TestCase
 
 	public function testBasic(): void
 	{
-		$loader = new DI\Config\Loader;
+		$loader = new DI\Config\Loader();
 		$config = $loader->load(Tester\FileMock::create('
 		database:
 			first:
@@ -30,9 +30,9 @@ class MultipleTest extends Tester\TestCase
 				lazy: yes
 		', 'neon'));
 
-		$compiler = new DI\Compiler;
+		$compiler = new DI\Compiler();
 		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(FALSE));
-		$containerName = 'Container' . uniqid();
+		$containerName = 'Container' . \uniqid();
 		eval($compiler->addConfig($config)->setClassName($containerName)->compile());
 
 		$container = new $containerName();
@@ -47,4 +47,4 @@ class MultipleTest extends Tester\TestCase
 
 }
 
-(new MultipleTest)->run();
+(new MultipleTest())->run();

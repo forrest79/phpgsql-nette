@@ -16,7 +16,7 @@ class BasicTest extends Tester\TestCase
 
 	public function testBasic(): void
 	{
-		$loader = new DI\Config\Loader;
+		$loader = new DI\Config\Loader();
 		$config = $loader->load(Tester\FileMock::create('
 		database:
 			config: "host=localhost port=5432 user=postgres password=postgres dbname=postgres"
@@ -24,11 +24,11 @@ class BasicTest extends Tester\TestCase
 			lazy: yes
 		', 'neon'));
 
-		$compiler = new DI\Compiler;
+		$compiler = new DI\Compiler();
 		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(FALSE));
 		eval($compiler->addConfig($config)->setClassName('Container1')->compile());
 
-		$container = new \Container1;
+		$container = new \Container1();
 		$container->initialize();
 
 		$connection = $container->getService('database.default.connection');
@@ -37,4 +37,4 @@ class BasicTest extends Tester\TestCase
 
 }
 
-(new BasicTest)->run();
+(new BasicTest())->run();

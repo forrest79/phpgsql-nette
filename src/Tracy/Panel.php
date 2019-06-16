@@ -26,13 +26,13 @@ class Panel implements Tracy\IBarPanel
 
 	private function __construct(PhPgSql\Db\Connection $connection, string $name)
 	{
-		$connection->addOnConnect(function() {
+		$connection->addOnConnect(function (): void {
 			$this->logConnect();
 		});
-		$connection->addOnClose(function() {
+		$connection->addOnClose(function (): void {
 			$this->logClose();
 		});
-		$connection->addOnQuery(function(PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) {
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL): void {
 			$this->logQuery($query, $time);
 		});
 		$this->name = $name;
@@ -74,7 +74,7 @@ class Panel implements Tracy\IBarPanel
 		$params = $query->getParams();
 		$this->queries[] = [
 			PhPgSql\Db\Helper::dump($query->getSql()),
-			count($params) > 0 ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
+			\count($params) > 0 ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
 			PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()),
 			$time,
 		];
@@ -102,8 +102,8 @@ class Panel implements Tracy\IBarPanel
 
 		$parameters = '';
 		$params = $query->getParams();
-		if (count($params) > 0) {
-			$parameters = sprintf('
+		if (\count($params) > 0) {
+			$parameters = \sprintf('
 				<h3>Parameters:</h3>
 				<pre>%s</pre>
 			', Tracy\Debugger::dump(self::printParams($params), TRUE));
@@ -111,7 +111,7 @@ class Panel implements Tracy\IBarPanel
 
 		return [
 			'tab' => 'SQL',
-			'panel' => sprintf('
+			'panel' => \sprintf('
 				<h3>Query:</h3>
 				<pre>%s</pre>
 
@@ -126,11 +126,11 @@ class Panel implements Tracy\IBarPanel
 
 	private static function printParams(array $params): array
 	{
-		$keys = range(1, count($params));
-		array_walk($keys, function(&$value) {
+		$keys = \range(1, \count($params));
+		\array_walk($keys, static function (&$value): void {
 			$value = '$' . $value;
 		});
-		$paramsToPrint = array_combine($keys, array_values($params));
+		$paramsToPrint = \array_combine($keys, \array_values($params));
 		if ($paramsToPrint === FALSE) {
 			throw new Nette\InvalidArgumentException();
 		}
@@ -143,9 +143,10 @@ class Panel implements Tracy\IBarPanel
 		$name = $this->name;
 		$count = $this->count;
 		$totalTime = $this->totalTime;
-		ob_start(function () {});
+		\ob_start(static function (): void {
+		});
 		require __DIR__ . '/templates/Panel.tab.phtml';
-		return ob_get_clean() ?: '';
+		return \ob_get_clean() ?: '';
 	}
 
 
@@ -160,9 +161,10 @@ class Panel implements Tracy\IBarPanel
 		$totalTime = $this->totalTime;
 		$queries = $this->queries;
 
-		ob_start(function () {});
+		\ob_start(static function (): void {
+		});
 		require __DIR__ . '/templates/Panel.panel.phtml';
-		return ob_get_clean() ?: '';
+		return \ob_get_clean() ?: '';
 	}
 
 }

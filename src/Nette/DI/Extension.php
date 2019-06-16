@@ -2,8 +2,8 @@
 
 namespace Forrest79\PhPgSql\Nette\DI;
 
-use Nette;
 use Forrest79\PhPgSql;
+use Nette;
 use Tracy;
 
 class Extension extends Nette\DI\CompilerExtension
@@ -39,8 +39,8 @@ class Extension extends Nette\DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		$configs = $this->getConfig();
-		foreach ($configs as $k => $v) {
-			if (is_scalar($v)) {
+		foreach ($configs as $values) {
+			if (\is_scalar($values)) {
 				$configs = ['default' => $configs];
 				break;
 			}
@@ -48,7 +48,7 @@ class Extension extends Nette\DI\CompilerExtension
 
 		$defaults = $this->defaults;
 		foreach ($configs as $name => $config) {
-			if (!is_array($config)) {
+			if (!\is_array($config)) {
 				continue;
 			}
 			$config = $this->validateConfig($defaults, $config, $this->prefix($name));
@@ -64,11 +64,11 @@ class Extension extends Nette\DI\CompilerExtension
 
 		$connectionClass = $config['connectionClass'];
 
-		if (!is_subclass_of($connectionClass, PhPgSql\Db\Connection::class)) {
-			throw new \InvalidArgumentException(sprintf('Parameter \'connectionClass\' must extends \'%s\'', PhPgSql\Db\Connection::class));
+		if (!\is_subclass_of($connectionClass, PhPgSql\Db\Connection::class)) {
+			throw new \InvalidArgumentException(\sprintf('Parameter \'connectionClass\' must extends \'%s\'', PhPgSql\Db\Connection::class));
 		}
 
-		$connection = $builder->addDefinition($this->prefix("$name.connection"))
+		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
 			->setFactory($connectionClass, [$config['config'], $config['forceNew'], $config['async']])
 			->setAutowired($config['autowired']);
 
