@@ -74,7 +74,7 @@ class Panel implements Tracy\IBarPanel
 		$params = $query->getParams();
 		$this->queries[] = [
 			PhPgSql\Db\Helper::dump($query->getSql()),
-			\count($params) > 0 ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL,
+			($params !== [] ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL), // @hack surrounding parentheses are because of phpcs
 			PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()),
 			$time,
 		];
@@ -102,7 +102,7 @@ class Panel implements Tracy\IBarPanel
 
 		$parameters = '';
 		$params = $query->getParams();
-		if (\count($params) > 0) {
+		if ($params !== []) {
 			$parameters = \sprintf('
 				<h3>Parameters:</h3>
 				<pre>%s</pre>
