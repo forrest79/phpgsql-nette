@@ -11,13 +11,13 @@
 		}
 	],
 	"require": {
-		"php":  ">=7.1",
+		"php": ">=7.1",
 		"forrest79/phpgsql": "~0.6",
-		"nette/di":  "^2.4",
-		"tracy/tracy":  "^2.4"
+		"nette/di": "^2.4"
 	},
 	"require-dev": {
 		"nette/tester": "~2",
+		"tracy/tracy":  "^2.4",
 		"phpstan/phpstan": "^0.11",
 		"phpstan/phpstan-strict-rules": "^0.11",
 		"consistence/coding-standard": "^3.8",

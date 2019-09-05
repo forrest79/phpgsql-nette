@@ -20,7 +20,7 @@ class Extension extends Nette\DI\CompilerExtension
 		'dataTypeCache' => NULL,
 		'lazy' => TRUE,
 		'autowired' => TRUE,
-		'debugger' => TRUE,
+		'debugger' => NULL,
 	];
 
 	/** @var bool */
@@ -30,6 +30,7 @@ class Extension extends Nette\DI\CompilerExtension
 	public function __construct(bool $debugMode)
 	{
 		$this->debugMode = $debugMode;
+		$this->defaults['debugger'] = \class_exists(Tracy\BlueScreen::class);
 	}
 
 
