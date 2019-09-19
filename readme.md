@@ -37,9 +37,9 @@ database:
     config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
     connectionClass: '\Forrest79\PhPgSql\Fluent\Connection', # you can change connection class, ie basic \Forrest79\PhPgSql\DB\Connection or your own, but every connection class must extends \Forrest79\PhPgSql\Fluent\Connection 
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
-    defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needs to be registered, default is NULL and default row factory is used
-    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needs to be registered, default is NULL and default data type parser is used
-    dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needs to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is NULL and cache is disabled
+    defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
+    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
+    dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needed to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is NULL and cache is disabled
     forceNew: yes # default is no
     async: yes # default is no
     lazy: no # default is yes
