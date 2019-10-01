@@ -35,7 +35,6 @@ Than, register connection (one connection is as default):
 ```yaml
 database:
     config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
-    connectionClass: '\Forrest79\PhPgSql\Fluent\Connection', # you can change connection class, ie basic \Forrest79\PhPgSql\DB\Connection or your own, but every connection class must extends \Forrest79\PhPgSql\Fluent\Connection 
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
     defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
     dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
@@ -70,3 +69,42 @@ Second can be get by:
 ```php
 $container->getService('database.second.connection');
 ```
+
+## Use your own connection class
+
+By default `Forrest79\PhPgSql\Fluent\Connection` is registered to DI as connection class. If you want to use other (your own) connection class, you need to use own connection factory. This is class that implements `Forrest79\PhPgSql\Nette\Connection\ConnectionCreator` interface and you must specify concrete return type with your connection class.
+
+Example:
+
+```php
+class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\ConnectionCreator
+{
+    /** @var int */
+    private $statementTimeout = NULL;
+
+    public function __construct(int $sessionTimeout)
+    {
+        $this->statementTimeout = $sessionTimeout;
+    }
+
+    public function create(string $config, bool $forceNew, bool $async): MyOwnConnection
+    {
+        return (new Connection(
+            sprintf('%s connect_timeout=5', $config),
+            $forceNew,
+            $async,
+        ))->addOnConnect(function(Forrest79\PhPgSql\Db\Connection $connection) {
+            $connection->query(sprintf('SET statement_timeout = %d', $this->statementTimeout));
+        });
+    }
+}
+```  
+
+And now, you just need to override old connection factory with this one in DI configuration, `services` section, like this:
+
+```yaml
+services:
+    database.default.connection.factory: ConnectionFactory(15)
+```
+
+Where `default` is connection name.

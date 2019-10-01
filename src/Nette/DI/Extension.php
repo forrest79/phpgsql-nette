@@ -10,7 +10,6 @@ class Extension extends Nette\DI\CompilerExtension
 {
 	/** @var array */
 	public $defaults = [
-		'connectionClass' => PhPgSql\Fluent\Connection::class,
 		'config' => NULL,
 		'forceNew' => FALSE,
 		'async' => FALSE,
@@ -25,6 +24,9 @@ class Extension extends Nette\DI\CompilerExtension
 
 	/** @var bool */
 	private $debugMode;
+
+	/** @var array */
+	private $names = [];
 
 
 	public function __construct(bool $debugMode)
@@ -55,6 +57,8 @@ class Extension extends Nette\DI\CompilerExtension
 			$config = $this->validateConfig($defaults, $config, $this->prefix($name));
 			$defaults['autowired'] = FALSE;
 			$this->setupDatabase($config, $name);
+
+			$this->names[] = $name;
 		}
 	}
 
@@ -63,14 +67,13 @@ class Extension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$connectionClass = $config['connectionClass'];
+		$connectionFactory = $this->prefix(\sprintf('%s.connection.factory', $name));
 
-		if (!\is_subclass_of($connectionClass, PhPgSql\Db\Connection::class)) {
-			throw new \InvalidArgumentException(\sprintf('Parameter \'connectionClass\' must extends \'%s\'', PhPgSql\Db\Connection::class));
-		}
+		$builder->addDefinition($connectionFactory)
+			->setFactory(PhPgSql\Nette\Connection\FluentConnectionFactory::class);
 
 		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
-			->setFactory($connectionClass, [$config['config'], $config['forceNew'], $config['async']])
+			->setFactory('@' . $connectionFactory . '::create', [$config['config'], $config['forceNew'], $config['async']])
 			->setAutowired($config['autowired']);
 
 		if ($config['asyncWaitSeconds'] !== NULL) {
@@ -100,6 +103,38 @@ class Extension extends Nette\DI\CompilerExtension
 
 		if ($config['lazy'] === FALSE) {
 			$connection->addSetup('connect');
+		}
+	}
+
+
+	public function beforeCompile()
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->names as $name) {
+			$connectionFactory = $this->prefix(\sprintf('%s.connection.factory', $name));
+			$connectionFactoryType = (string) $builder->getDefinition($connectionFactory)->getType();
+			if (!\is_subclass_of($connectionFactoryType, PhPgSql\Nette\Connection\ConnectionCreator::class)) {
+				throw new \InvalidArgumentException(\sprintf(
+					'Connection factory \'%s\' must implement \'%s\' interface',
+					$connectionFactory,
+					PhPgSql\Nette\Connection\ConnectionCreator::class,
+				));
+			}
+
+			$connectionFactoryReflection = new \ReflectionClass($connectionFactoryType);
+			$connectionReturnType = $connectionFactoryReflection->getMethod('create')->getReturnType();
+			$connectionType = $connectionReturnType === NULL ? '' : $connectionReturnType->getName();
+			if (!\is_subclass_of($connectionType, PhPgSql\Db\Connection::class)) {
+				throw new \InvalidArgumentException(\sprintf(
+					'Connection factory \'%s\' must return connection that extends \'%s\' in create() method, \'%s\' is returning',
+					$connectionFactory,
+					PhPgSql\Db\Connection::class,
+					$connectionType,
+				));
+			}
+
+			$builder->getDefinition($this->prefix(\sprintf('%s.connection', $name)))->setType($connectionType);
 		}
 	}
 
