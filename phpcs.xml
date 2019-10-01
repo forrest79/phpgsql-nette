@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="Geekshirts">
+<ruleset name="PhPgSql-Nette">
 	<rule ref="./vendor/consistence/coding-standard/Consistence/ruleset.xml">
 		<exclude name="Generic.PHP.LowerCaseConstant.Found"/>
+		<exclude name="Squiz.Scope.MethodScope.Missing"/> <!-- We ignore visibility on interfaces -->
 	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -32,6 +33,7 @@
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostIncrementOperator"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword"/>
+		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions.NonFullyQualifiedException"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.PartialUse"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName"/>
@@ -51,6 +53,7 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
+		<exclude-pattern>src/Nette/Connection/ConnectionCreator.php</exclude-pattern>
 		<exclude-pattern>src/Nette/DI/Extension.php</exclude-pattern>
 	</rule>
 
