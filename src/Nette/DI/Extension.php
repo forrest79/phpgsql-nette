@@ -118,7 +118,7 @@ class Extension extends Nette\DI\CompilerExtension
 				throw new \InvalidArgumentException(\sprintf(
 					'Connection factory \'%s\' must implement \'%s\' interface',
 					$connectionFactory,
-					PhPgSql\Nette\Connection\ConnectionCreator::class,
+					PhPgSql\Nette\Connection\ConnectionCreator::class
 				));
 			}
 
@@ -130,7 +130,7 @@ class Extension extends Nette\DI\CompilerExtension
 					'Connection factory \'%s\' must return connection that extends \'%s\' in create() method, \'%s\' is returning',
 					$connectionFactory,
 					PhPgSql\Db\Connection::class,
-					$connectionType,
+					$connectionType
 				));
 			}
 
