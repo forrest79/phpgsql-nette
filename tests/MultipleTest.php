@@ -20,12 +20,22 @@ class MultipleTest extends Tester\TestCase
 		$config = $loader->load(Tester\FileMock::create('
 		database:
 			first:
-				config: "host=localhost port=5432 user=postgres password=postgres dbname=postgres"
+				config:
+					host: localhost
+					port: 5432
+					user: postgres
+					password: postgres
+					dbname: postgres
 				debugger: no
 				lazy: yes
 
 			second:
-				config: "host=localhost port=5433 user=postgres password=postgres dbname=postgres"
+				config:
+					host: localhost
+					port: 5433
+					user: postgres
+					password: postgres
+					dbname: postgres
 				debugger: no
 				lazy: yes
 		', 'neon'));

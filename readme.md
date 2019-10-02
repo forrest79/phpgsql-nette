@@ -34,7 +34,13 @@ Than, register connection (one connection is as default):
 
 ```yaml
 database:
-    config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
+    config: # default is empty array, keys and values are not checked, just imploded to `pg_connect` `$connection_string` as `"key1=value1 key2=value2 ..."`
+        host: localhost
+        port: 5432
+        user: postgres
+        password: postgres
+        dbname: postgres
+        connect_timeout: 5 # good habit is to use connect_timeout parameter 
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
     defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
     dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
@@ -51,9 +57,19 @@ Or multiple connections:
 ```yaml
 database:
     first:
-        config: 'host=localhost port=5432 user=postgres password=postgres dbname=postgres'
+        config:
+            host: localhost
+            port: 5432
+            user: postgres
+            password: postgres
+            dbname: postgres
     second:
-        config: 'host=localhost port=5433 user=postgres password=postgres dbname=postgres'
+        config:
+            host: localhost
+            port: 5433
+            user: postgres
+            password: postgres
+            dbname: postgres
 ```
 
 First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. Or can be get by:
@@ -87,15 +103,23 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
         $this->statementTimeout = $sessionTimeout;
     }
 
-    public function create(string $config, bool $forceNew, bool $async): MyOwnConnection
+    /**
+     * In `$config` array are all values from connection config definition, you can use some special/meta values for your own logic and unset it from `$config` before sending it to `prepareConfig()` function. 
+     */
+    public function create(array $config, bool $forceNew, bool $async): MyOwnConnection
     {
         return (new Connection(
-            sprintf('%s connect_timeout=5', $config),
+            $this->prepareConfig($config), // this will implode array config to string, you can extend this method and add some default settings or your own logic
             $forceNew,
             $async,
         ))->addOnConnect(function(Forrest79\PhPgSql\Db\Connection $connection) {
             $connection->query(sprintf('SET statement_timeout = %d', $this->statementTimeout));
         });
+    }
+
+    protected function prepareConfig(array $config): string
+    {
+        return parent::prepareConfig($config + ['connect_timeout' => 5]);
     }
 }
 ```  

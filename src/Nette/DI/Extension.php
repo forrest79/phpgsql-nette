@@ -10,7 +10,7 @@ class Extension extends Nette\DI\CompilerExtension
 {
 	/** @var array */
 	public $defaults = [
-		'config' => NULL,
+		'config' => [],
 		'forceNew' => FALSE,
 		'async' => FALSE,
 		'asyncWaitSeconds' => NULL,

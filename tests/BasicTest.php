@@ -19,7 +19,13 @@ class BasicTest extends Tester\TestCase
 		$loader = new DI\Config\Loader();
 		$config = $loader->load(Tester\FileMock::create('
 		database:
-			config: "host=localhost port=5432 user=postgres password=postgres dbname=postgres"
+			config:
+				host: localhost
+				port: 5432
+				user: postgres
+				password: postgres
+				dbname: postgres
+				connect_timeout: 5
 			debugger: no
 			lazy: yes
 		', 'neon'));

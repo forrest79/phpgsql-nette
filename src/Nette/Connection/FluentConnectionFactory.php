@@ -4,12 +4,12 @@ namespace Forrest79\PhPgSql\Nette\Connection;
 
 use Forrest79\PhPgSql;
 
-class FluentConnectionFactory implements ConnectionCreator
+class FluentConnectionFactory extends ConnectionFactory
 {
 
-	public function create(string $config, bool $forceNew, bool $async): PhPgSql\Fluent\Connection
+	public function create(array $config, bool $forceNew, bool $async): PhPgSql\Fluent\Connection
 	{
-		return new PhPgSql\Fluent\Connection($config, $forceNew, $async);
+		return new PhPgSql\Fluent\Connection($this->prepareConfig($config), $forceNew, $async);
 	}
 
 }
