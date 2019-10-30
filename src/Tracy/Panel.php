@@ -24,16 +24,22 @@ class Panel implements Tracy\IBarPanel
 	private $queries = [];
 
 
-	private function __construct(PhPgSql\Db\Connection $connection, string $name)
+	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $logNotices = FALSE)
 	{
 		$connection->addOnConnect(function (): void {
 			$this->logConnect();
 		});
-		$connection->addOnClose(function (): void {
+		$connection->addOnClose(function (PhPgSql\Db\Connection $connection) use ($logNotices): void {
+			if ($logNotices) {
+				$this->logNotices($connection);
+			}
 			$this->logClose();
 		});
-		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL): void {
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($logNotices): void {
 			$this->logQuery($query, $time);
+			if ($logNotices) {
+				$this->logNotices($connection);
+			}
 		});
 		$this->name = $name;
 	}
@@ -81,9 +87,33 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
-	public static function initializePanel(PhPgSql\Db\Connection $connection, string $name): self
+	private function logNotices(PhPgSql\Db\Connection $connection): void
 	{
-		$panel = new self($connection, $name);
+		if (self::$disabled) {
+			return;
+		}
+
+		$notices = $connection->getNotices();
+
+		if ($notices !== []) {
+			$this->queries[] = [
+				\sprintf(
+					'<pre class="dump"><strong style="color:gray">%s</strong></pre>',
+					\implode('<br><br>', \array_map(static function ($notice): string {
+						return '<em>Notice:</em><br>' . \substr($notice, 9);
+					}, \array_map('nl2br', $notices)))
+				),
+				NULL,
+				NULL,
+				FALSE,
+			];
+		}
+	}
+
+
+	public static function initializePanel(PhPgSql\Db\Connection $connection, string $name, bool $logNotices): self
+	{
+		$panel = new self($connection, $name, $logNotices);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}

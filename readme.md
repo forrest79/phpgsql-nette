@@ -50,6 +50,7 @@ database:
     lazy: no # default is yes
     autowired: no # default is yes (for second and next connection is always no)
     debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
+    logNotices: yes # default is no (when yes, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
 ```
 
 Or multiple connections:
