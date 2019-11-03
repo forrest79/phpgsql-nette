@@ -13,6 +13,7 @@ class Extension extends Nette\DI\CompilerExtension
 		'config' => [],
 		'forceNew' => FALSE,
 		'async' => FALSE,
+		'errorVerbosity' => NULL,
 		'asyncWaitSeconds' => NULL,
 		'defaultRowFactory' => NULL,
 		'dataTypeParser' => NULL,
@@ -76,6 +77,10 @@ class Extension extends Nette\DI\CompilerExtension
 		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
 			->setFactory('@' . $connectionFactory . '::create', [$config['config'], $config['forceNew'], $config['async']])
 			->setAutowired($config['autowired']);
+
+		if ($config['errorVerbosity'] !== NULL) {
+			$connection->addSetup('setErrorVerbosity', [$config['errorVerbosity']]);
+		}
 
 		if ($config['asyncWaitSeconds'] !== NULL) {
 			$connection->addSetup('setConnectAsyncWaitSeconds', [$config['asyncWaitSeconds']]);

@@ -41,6 +41,7 @@ database:
         password: postgres
         dbname: postgres
         connect_timeout: 5 # good habit is to use connect_timeout parameter 
+    errorVerbosity: ::constant(PGSQL_ERRORS_VERBOSE) # default is NULL and it will use default error verbose PGSQL_ERRORS_DEFAULT, other value can be PGSQL_ERRORS_TERSE
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
     defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
     dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
