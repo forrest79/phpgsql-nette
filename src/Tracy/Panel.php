@@ -24,20 +24,20 @@ class Panel implements Tracy\IBarPanel
 	private $queries = [];
 
 
-	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $logNotices = FALSE)
+	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $explain = FALSE, bool $notices = FALSE)
 	{
 		$connection->addOnConnect(function (): void {
 			$this->logConnect();
 		});
-		$connection->addOnClose(function (PhPgSql\Db\Connection $connection) use ($logNotices): void {
-			if ($logNotices) {
+		$connection->addOnClose(function (PhPgSql\Db\Connection $connection) use ($notices): void {
+			if ($notices) {
 				$this->logNotices($connection);
 			}
 			$this->logClose();
 		});
-		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($logNotices): void {
-			$this->logQuery($query, $time);
-			if ($logNotices) {
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain, $notices): void {
+			$this->logQuery($query, $time, $explain ? self::explain($connection, $query) : []);
+			if ($notices) {
 				$this->logNotices($connection);
 			}
 		});
@@ -51,7 +51,7 @@ class Panel implements Tracy\IBarPanel
 			return;
 		}
 
-		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CONNECT]</strong></pre>', NULL, NULL, FALSE];
+		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CONNECT]</strong></pre>', NULL, NULL, FALSE, NULL];
 	}
 
 
@@ -61,11 +61,11 @@ class Panel implements Tracy\IBarPanel
 			return;
 		}
 
-		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CLOSE]</strong></pre>', NULL, NULL, FALSE];
+		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CLOSE]</strong></pre>', NULL, NULL, FALSE, NULL];
 	}
 
 
-	public function logQuery(PhPgSql\Db\Query $query, ?float $time = NULL): void
+	public function logQuery(PhPgSql\Db\Query $query, ?float $time = NULL, ?array $explain = NULL): void
 	{
 		if (self::$disabled) {
 			return;
@@ -81,8 +81,9 @@ class Panel implements Tracy\IBarPanel
 		$this->queries[] = [
 			PhPgSql\Db\Helper::dump($query->getSql()),
 			($params !== [] ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL), // @hack surrounding parentheses are because of phpcs
-			PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()),
+			($params !== [] ? PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()) : NULL), // @hack surrounding parentheses are because of phpcs
 			$time,
+			$explain,
 		];
 	}
 
@@ -106,14 +107,36 @@ class Panel implements Tracy\IBarPanel
 				NULL,
 				NULL,
 				FALSE,
+				NULL,
 			];
 		}
 	}
 
 
-	public static function initializePanel(PhPgSql\Db\Connection $connection, string $name, bool $logNotices): self
+	private static function explain(PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query): ?array
 	{
-		$panel = new self($connection, $name, $logNotices);
+		if (self::$disabled) {
+			return NULL;
+		}
+
+		$explainQuery = new PhPgSql\Db\Query('EXPLAIN ' . $query->getSql(), $query->getParams());
+
+		try {
+			self::$disabled = TRUE;
+			$explain = $connection->query($explainQuery)->fetchAll();
+		} catch (PhPgSql\Db\Exceptions\QueryException $e) {
+			$explain = NULL;
+		} finally {
+			self::$disabled = FALSE;
+		}
+
+		return $explain;
+	}
+
+
+	public static function initializePanel(PhPgSql\Db\Connection $connection, string $name, bool $explain, bool $notices): self
+	{
+		$panel = new self($connection, $name, $explain, $notices);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}

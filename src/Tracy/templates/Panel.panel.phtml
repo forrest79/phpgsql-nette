@@ -4,8 +4,9 @@ namespace Forrest79\PhPgSql\Tracy;
 
 ?>
 <style class="tracy-debug">
-	#tracy-debug td.nette-DbPanel-sql { background: white !important }
-	#tracy-debug .nette-DbPanel-binded td { white-space: pre }
+	#tracy-debug td.phpgsql-panel-sql { background: white !important }
+	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre }
+	#tracy-debug .phpgsql-panel-explain td { font-size: 11px }
 </style>
 
 <h1>Queries: <?php echo $count, ($totalTime ? sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
@@ -15,23 +16,36 @@ namespace Forrest79\PhPgSql\Tracy;
 		<tr><th>Time&nbsp;ms</th><th>SQL Query</th><th>Params</th></tr>
 		<?php
 		foreach ($queries as $query):
-			[$sql, $params, $bindedSql, $time] = $query;
+			[$sql, $params, $bindedSql, $time, $explain] = $query;
 		?>
 		<tr>
 		<td>
 		<?php if ($time === FALSE): echo '-'; elseif ($time !== NULL): echo sprintf('%0.3f', $time * 1000); else: echo '<em>async</em>'; endif ?>
 		<?php if ($bindedSql): ?>
-			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .nette-DbPanel-binded">binded</a>
+			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-binded">binded</a>
+		<?php endif ?>
+		<?php if ($explain): ?>
+			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-explain">explain</a>
 		<?php endif ?>
 		</td>
-		<td class="nette-DbPanel-sql"><?= $sql ?>
+		<td class="phpgsql-panel-sql"><?= $sql ?>
 		<?php if ($bindedSql): ?>
-			<table class="tracy-collapsed nette-DbPanel-binded">
+			<table class="tracy-collapsed phpgsql-panel-binded">
 			<tr>
 				<th>Binded query:</th>
 			</tr>
 			<tr>
 				<td><?= $bindedSql ?></td>
+			</tr>
+			</table>
+		<?php endif ?>
+		<?php if ($explain): ?>
+			<table class="tracy-collapsed phpgsql-panel-explain">
+			<tr>
+				<th>Explain:</th>
+			</tr>
+			<tr>
+				<td><?php foreach ($explain as $row): ?><?= htmlspecialchars($row['QUERY PLAN'], ENT_NOQUOTES, 'UTF-8') ?><br><?php endforeach ?></td>
 			</tr>
 			</table>
 		<?php endif ?>

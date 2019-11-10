@@ -21,7 +21,8 @@ class Extension extends Nette\DI\CompilerExtension
 		'lazy' => TRUE,
 		'autowired' => TRUE,
 		'debugger' => NULL,
-		'logNotices' => FALSE,
+		'explain' => FALSE,
+		'notices' => FALSE,
 	];
 
 	/** @var bool */
@@ -103,7 +104,12 @@ class Extension extends Nette\DI\CompilerExtension
 				PhPgSql\Tracy\Panel::class . '::renderException',
 			]);
 			if ($this->debugMode) {
-				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?)', PhPgSql\Tracy\Panel::class), ['@self', $name, $config['logNotices']]);
+				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
+					'@self',
+					$name,
+					$config['explain'],
+					$config['notices'],
+				]);
 			}
 		}
 
