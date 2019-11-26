@@ -7,9 +7,13 @@ abstract class ConnectionFactory implements ConnectionCreator
 
 	protected function prepareConfig(array $config): string
 	{
-		return \implode(' ', \array_map(static function (string $key, $value) {
-			return $key . '=' . $value;
-		}, \array_keys($config), \array_values($config)));
+		$dbConfig = [];
+		foreach ($config as $key => $value) {
+			if (($value !== '') && ($value !== NULL)) {
+				$dbConfig[] = $key . '=' . $value;
+			}
+		}
+		return \implode(' ', $dbConfig);
 	}
 
 }
