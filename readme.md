@@ -125,7 +125,9 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
         return parent::prepareConfig($config + ['connect_timeout' => 5]);
     }
 }
-```  
+```
+
+Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from array with configuration. Items with `NULL` values are skipped.
 
 And now, you just need to override old connection factory with this one in DI configuration, `services` section, like this:
 
