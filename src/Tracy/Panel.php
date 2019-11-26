@@ -26,42 +26,18 @@ class Panel implements Tracy\IBarPanel
 
 	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $explain = FALSE, bool $notices = FALSE)
 	{
-		$connection->addOnConnect(function (): void {
-			$this->logConnect();
-		});
-		$connection->addOnClose(function (PhPgSql\Db\Connection $connection) use ($notices): void {
-			if ($notices) {
-				$this->logNotices($connection);
-			}
-			$this->logClose();
-		});
-		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain, $notices): void {
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
 			$this->logQuery($query, $time, $explain ? self::explain($connection, $query) : []);
-			if ($notices) {
-				$this->logNotices($connection);
-			}
 		});
+		if ($notices) {
+			$connection->addOnQuery(function (PhPgSql\Db\Connection $connection): void {
+				$this->logNotices($connection);
+			});
+			$connection->addOnClose(function (PhPgSql\Db\Connection $connection): void {
+				$this->logNotices($connection);
+			});
+		}
 		$this->name = $name;
-	}
-
-
-	private function logConnect(): void
-	{
-		if (self::$disabled) {
-			return;
-		}
-
-		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CONNECT]</strong></pre>', NULL, NULL, FALSE, NULL];
-	}
-
-
-	private function logClose(): void
-	{
-		if (self::$disabled) {
-			return;
-		}
-
-		$this->queries[] = ['<pre class="dump"><strong style="color:blue">[CLOSE]</strong></pre>', NULL, NULL, FALSE, NULL];
 	}
 
 
