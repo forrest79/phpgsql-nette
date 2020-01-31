@@ -95,7 +95,7 @@ class Panel implements Tracy\IBarPanel
 			return NULL;
 		}
 
-		$explainQuery = new PhPgSql\Db\Query('EXPLAIN ' . $query->getSql(), $query->getParams());
+		$explainQuery = new PhPgSql\Db\SqlQuery('EXPLAIN ' . $query->getSql(), $query->getParams());
 
 		try {
 			self::$disabled = TRUE;
