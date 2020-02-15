@@ -3,6 +3,9 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/forrest79/PhPgSql-Nette/blob/master/license.md)
 [![Build Status](https://travis-ci.org/forrest79/PhPgSql-Nette.svg?branch=master)](https://travis-ci.org/forrest79/PhPgSql-Nette)
 
+* [Nette](https://nette.org)
+* [PhPgSql](https://github.com/forrest79/PhPgSql)
+
 Use PhPgSql with Nette Framework.
 
 ## Introduction
