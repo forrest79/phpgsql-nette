@@ -3,3 +3,8 @@ includes:
 
 parameters:
 	level: max
+	ignoreErrors:
+		# === This is OK for PHP >= 7.1 ===
+		-
+			message: '#Call to an undefined method ReflectionType::getName\(\)\.#'
+			path: %rootDir%/../../../src/Nette/DI/Extension.php

@@ -8,9 +8,7 @@ interface ConnectionCreator
 {
 
 	/**
-	 * @param array $config
-	 * @param bool $forceNew
-	 * @param bool $async
+	 * @param array<string, mixed> $config
 	 * @return PhPgSql\Fluent\Connection
 	 */
 	function create(array $config, bool $forceNew, bool $async);

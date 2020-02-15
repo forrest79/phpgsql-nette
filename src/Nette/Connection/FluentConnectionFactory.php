@@ -7,6 +7,9 @@ use Forrest79\PhPgSql;
 class FluentConnectionFactory extends ConnectionFactory
 {
 
+	/**
+	 * @param array<string, mixed> $config
+	 */
 	public function create(array $config, bool $forceNew, bool $async): PhPgSql\Fluent\Connection
 	{
 		return new PhPgSql\Fluent\Connection($this->prepareConfig($config), $forceNew, $async);

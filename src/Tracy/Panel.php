@@ -20,7 +20,7 @@ class Panel implements Tracy\IBarPanel
 	/** @var int */
 	private $count = 0;
 
-	/** @var array */
+	/** @var array<int, mixed> */
 	private $queries = [];
 
 
@@ -41,6 +41,9 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
+	/**
+	 * @param array<PhPgSql\Db\Row>|NULL $explain
+	 */
 	public function logQuery(PhPgSql\Db\Query $query, ?float $time = NULL, ?array $explain = NULL): void
 	{
 		if (self::$disabled) {
@@ -89,13 +92,16 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
+	/**
+	 * @return array<PhPgSql\Db\Row>|null
+	 */
 	private static function explain(PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query): ?array
 	{
 		if (self::$disabled) {
 			return NULL;
 		}
 
-		$explainQuery = new PhPgSql\Db\SqlQuery('EXPLAIN ' . $query->getSql(), $query->getParams());
+		$explainQuery = new PhPgSql\Db\Sql\Query('EXPLAIN ' . $query->getSql(), $query->getParams());
 
 		try {
 			self::$disabled = TRUE;
@@ -118,6 +124,9 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
+	/**
+	 * @return array<string, string>|NULL
+	 */
 	public static function renderException(?\Throwable $e): ?array
 	{
 		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
@@ -153,6 +162,10 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
+	/**
+	 * @param array<mixed> $params
+	 * @return array<string, mixed>
+	 */
 	private static function printParams(array $params): array
 	{
 		$keys = \range(1, \count($params));
@@ -175,7 +188,10 @@ class Panel implements Tracy\IBarPanel
 		\ob_start(static function (): void {
 		});
 		require __DIR__ . '/templates/Panel.tab.phtml';
-		return \ob_get_clean() ?: '';
+
+		$data = \ob_get_clean();
+
+		return $data === FALSE ? '' : $data;
 	}
 
 
@@ -193,7 +209,10 @@ class Panel implements Tracy\IBarPanel
 		\ob_start(static function (): void {
 		});
 		require __DIR__ . '/templates/Panel.panel.phtml';
-		return \ob_get_clean() ?: '';
+
+		$data = \ob_get_clean();
+
+		return $data === FALSE ? '' : $data;
 	}
 
 }

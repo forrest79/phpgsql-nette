@@ -5,6 +5,9 @@ namespace Forrest79\PhPgSql\Nette\Connection;
 abstract class ConnectionFactory implements ConnectionCreator
 {
 
+	/**
+	 * @param array<string, mixed> $config
+	 */
 	protected function prepareConfig(array $config): string
 	{
 		$configItems = [];

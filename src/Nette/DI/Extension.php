@@ -8,7 +8,7 @@ use Tracy;
 
 class Extension extends Nette\DI\CompilerExtension
 {
-	/** @var array */
+	/** @var array<string, mixed> */
 	public $defaults = [
 		'config' => [],
 		'forceNew' => FALSE,
@@ -28,7 +28,7 @@ class Extension extends Nette\DI\CompilerExtension
 	/** @var bool */
 	private $debugMode;
 
-	/** @var array */
+	/** @var array<string> */
 	private $names = [];
 
 
@@ -39,10 +39,7 @@ class Extension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @return void
-	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$configs = $this->getConfig();
 		foreach ($configs as $values) {
@@ -66,6 +63,9 @@ class Extension extends Nette\DI\CompilerExtension
 	}
 
 
+	/**
+	 * @param array<string, mixed> $config
+	 */
 	private function setupDatabase(array $config, string $name): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -99,7 +99,7 @@ class Extension extends Nette\DI\CompilerExtension
 			$connection->addSetup('setDataTypeCache', [$config['dataTypeCache']]);
 		}
 
-		if ($config['debugger']) {
+		if ($config['debugger'] === TRUE) {
 			$connection->addSetup(\sprintf('@%s::addPanel', Tracy\BlueScreen::class), [
 				PhPgSql\Tracy\Panel::class . '::renderException',
 			]);
@@ -119,7 +119,7 @@ class Extension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 
