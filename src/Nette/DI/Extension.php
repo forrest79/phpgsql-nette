@@ -4,6 +4,7 @@ namespace Forrest79\PhPgSql\Nette\DI;
 
 use Forrest79\PhPgSql;
 use Nette;
+use Nette\Schema;
 use Tracy;
 
 class Extension extends Nette\DI\CompilerExtension
@@ -42,6 +43,19 @@ class Extension extends Nette\DI\CompilerExtension
 	public function loadConfiguration(): void
 	{
 		$configs = (array) $this->getConfig();
+		if (\method_exists(Nette\DI\CompilerExtension::class, 'getConfigSchema')) {
+			$this->loadConfiguration30($configs);
+		} else {
+			$this->loadConfiguration24($configs);
+		}
+	}
+
+
+	/**
+	 * @param array<string, mixed> $configs
+	 */
+	private function loadConfiguration24(array $configs): void
+	{
 		foreach ($configs as $values) {
 			if (\is_scalar($values)) {
 				$configs = ['default' => $configs];
@@ -64,6 +78,21 @@ class Extension extends Nette\DI\CompilerExtension
 
 
 	/**
+	 * @param array<string, mixed> $configs
+	 */
+	private function loadConfiguration30(array $configs): void
+	{
+		foreach ($configs as $name => $config) {
+			if ($config->autowired === NULL) {
+				$config->autowired = FALSE;
+			}
+			$this->setupDatabase((array) $config, $name);
+			$this->names[] = $name;
+		}
+	}
+
+
+	/**
 	 * @param array<string, mixed> $config
 	 */
 	private function setupDatabase(array $config, string $name): void
@@ -76,7 +105,11 @@ class Extension extends Nette\DI\CompilerExtension
 			->setFactory(PhPgSql\Nette\Connection\FluentConnectionFactory::class);
 
 		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
-			->setFactory('@' . $connectionFactory . '::create', [$config['config'], $config['forceNew'], $config['async']])
+			->setFactory('@' . $connectionFactory . '::create', [
+				(array) $config['config'],
+				$config['forceNew'],
+				$config['async'],
+			])
 			->setAutowired($config['autowired']);
 
 		if ($config['errorVerbosity'] !== NULL) {
@@ -151,6 +184,39 @@ class Extension extends Nette\DI\CompilerExtension
 			\assert($service instanceof Nette\DI\ServiceDefinition);
 			$service->setType($connectionType);
 		}
+	}
+
+
+	public function getConfigSchema(): Schema\Schema
+	{
+		return Schema\Expect::arrayOf(
+			Schema\Expect::structure([
+				'config' => Schema\Expect::array([]),
+				'forceNew' => Schema\Expect::bool(FALSE),
+				'async' => Schema\Expect::bool(FALSE),
+				'errorVerbosity' => Schema\Expect::int(),
+				'asyncWaitSeconds' => Schema\Expect::int(),
+				'defaultRowFactory' => Schema\Expect::string(),
+				'dataTypeParser' => Schema\Expect::string(),
+				'dataTypeCache' => Schema\Expect::string(),
+				'lazy' => Schema\Expect::bool(TRUE),
+				'autowired' => Schema\Expect::bool(),
+				'debugger' => Schema\Expect::bool(\class_exists(Tracy\BlueScreen::class)),
+				'explain' => Schema\Expect::bool(FALSE),
+				'notices' => Schema\Expect::bool(FALSE),
+			])
+		)->before(static function ($val) {
+			foreach ($val as $key => $values) {
+				if ($key === 'errorVerbosity') {
+					if (!isset($val['autowired'])) {
+						$val['autowired'] = TRUE;
+					}
+					$val = ['default' => $val];
+					break;
+				}
+			}
+			return $val;
+		});
 	}
 
 }
