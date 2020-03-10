@@ -18,7 +18,7 @@ Nette extension to easy use PhPgSql in Nette application.
 The recommended way to install PhPgSql - Nette is through Composer:
 
 ```sh
-composer require forrest79/phpgsql-nette --dev
+composer require forrest79/phpgsql-nette
 ```
 
 PhPgSql requires PHP 7.1.0 and pgsql binary extension.
