@@ -11,6 +11,9 @@ class Panel implements Tracy\IBarPanel
 	/** @var bool */
 	public static $disabled = FALSE;
 
+	/** @var PhPgSql\Db\Connection */
+	private $connection;
+
 	/** @var string */
 	private $name;
 
@@ -23,11 +26,14 @@ class Panel implements Tracy\IBarPanel
 	/** @var array<int, mixed> */
 	private $queries = [];
 
+	/** @var bool */
+	private $disableLogQuery = FALSE;
+
 
 	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $explain = FALSE, bool $notices = FALSE)
 	{
 		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
-			$this->logQuery($query, $time, $explain ? self::explain($connection, $query) : []);
+			$this->logQuery($query, $time, $explain);
 		});
 		if ($notices) {
 			$connection->addOnQuery(function (PhPgSql\Db\Connection $connection): void {
@@ -37,16 +43,15 @@ class Panel implements Tracy\IBarPanel
 				$this->logNotices($connection);
 			});
 		}
+
+		$this->connection = $connection;
 		$this->name = $name;
 	}
 
 
-	/**
-	 * @param array<PhPgSql\Db\Row>|NULL $explain
-	 */
-	public function logQuery(PhPgSql\Db\Query $query, ?float $time = NULL, ?array $explain = NULL): void
+	public function logQuery(PhPgSql\Db\Query $query, ?float $time, bool $explain): void
 	{
-		if (self::$disabled) {
+		if (self::$disabled || $this->disableLogQuery) {
 			return;
 		}
 
@@ -62,7 +67,7 @@ class Panel implements Tracy\IBarPanel
 			($params !== [] ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL), // @hack surrounding parentheses are because of phpcs
 			($params !== [] ? PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()) : NULL), // @hack surrounding parentheses are because of phpcs
 			$time,
-			$explain,
+			$explain ? self::explain($query) : [],
 		];
 	}
 
@@ -95,21 +100,23 @@ class Panel implements Tracy\IBarPanel
 	/**
 	 * @return array<PhPgSql\Db\Row>|null
 	 */
-	private static function explain(PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query): ?array
+	private function explain(PhPgSql\Db\Query $query): ?array
 	{
-		if (self::$disabled) {
+		$sql = $query->getSql();
+
+		if (!(bool) \preg_match('#\s*\(?\s*SELECT\s#iA', $sql)) {
 			return NULL;
 		}
 
-		$explainQuery = new PhPgSql\Db\Sql\Query('EXPLAIN ' . $query->getSql(), $query->getParams());
+		$explainQuery = new PhPgSql\Db\Sql\Query('EXPLAIN ' . $sql, $query->getParams());
 
 		try {
-			self::$disabled = TRUE;
-			$explain = $connection->query($explainQuery)->fetchAll();
+			$this->disableLogQuery = TRUE;
+			$explain = $this->connection->query($explainQuery)->fetchAll();
 		} catch (PhPgSql\Db\Exceptions\QueryException $e) {
 			$explain = NULL;
 		} finally {
-			self::$disabled = FALSE;
+			$this->disableLogQuery = FALSE;
 		}
 
 		return $explain;
