@@ -60,11 +60,6 @@
 		</properties>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/*</exclude-pattern>
-	</rule>
-
 	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
 		<exclude-pattern>src/Nette/Connection/ConnectionCreator.php</exclude-pattern>
 	</rule>
@@ -75,5 +70,15 @@
 
 	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable">
 		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 </ruleset>
