@@ -151,7 +151,13 @@ class Panel implements Tracy\IBarPanel
 			$parameters = \sprintf('
 				<h3>Parameters:</h3>
 				<pre>%s</pre>
-			', Tracy\Debugger::dump(self::printParams($params), TRUE));
+			', Tracy\Dumper::toHtml(
+				self::printParams($params),
+				[
+					Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
+					Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
+				]
+			));
 		}
 
 		return [
