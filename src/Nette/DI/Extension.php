@@ -41,7 +41,7 @@ class Extension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration(): void
 	{
-		$configs = $this->getConfig();
+		$configs = (array) $this->getConfig();
 		foreach ($configs as $values) {
 			if (\is_scalar($values)) {
 				$configs = ['default' => $configs];
@@ -137,6 +137,7 @@ class Extension extends Nette\DI\CompilerExtension
 			$connectionFactoryReflection = new \ReflectionClass($connectionFactoryType);
 			$connectionReturnType = $connectionFactoryReflection->getMethod('create')->getReturnType();
 			$connectionType = $connectionReturnType === NULL ? '' : $connectionReturnType->getName();
+			\assert(\is_string($connectionType));
 			if (!\is_subclass_of($connectionType, PhPgSql\Db\Connection::class)) {
 				throw new \InvalidArgumentException(\sprintf(
 					'Connection factory \'%s\' must return connection that extends \'%s\' in create() method, \'%s\' is returning',
@@ -146,7 +147,9 @@ class Extension extends Nette\DI\CompilerExtension
 				));
 			}
 
-			$builder->getDefinition($this->prefix(\sprintf('%s.connection', $name)))->setType($connectionType);
+			$service = $builder->getDefinition($this->prefix(\sprintf('%s.connection', $name)));
+			\assert($service instanceof Nette\DI\ServiceDefinition);
+			$service->setType($connectionType);
 		}
 	}
 

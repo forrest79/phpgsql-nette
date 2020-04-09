@@ -13,7 +13,7 @@
 	"require": {
 		"php": ">=7.1",
 		"forrest79/phpgsql": "~0.10",
-		"nette/di": "^2.4"
+		"nette/di": "^2.4 || ^3.0"
 	},
 	"require-dev": {
 		"nette/tester": "~2",
