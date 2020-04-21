@@ -27,7 +27,10 @@
 
 	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
 		<exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
+		<exclude name="SlevomatCodingStandard.Classes.ClassStructure.IncorrectGroupOrder"/>
+		<exclude name="SlevomatCodingStandard.Commenting.DisallowCommentAfterCode.DisallowedCommentAfterCode"/>
 		<exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment"/>
+		<exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountAfterControlStructure"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountBeforeControlStructure"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator.DisallowedShortTernaryOperator"/>
@@ -37,6 +40,7 @@
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostIncrementOperator"/>
+		<exclude name="SlevomatCodingStandard.Files.LineLength.LineTooLong"/>
 		<exclude name="SlevomatCodingStandard.Functions.RequireArrowFunction.RequiredArrowFunction"/><!-- PHP 7.4 -->
 		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedPassingByReference"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword"/>
@@ -51,6 +55,19 @@
 		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversablePropertyTypeHintSpecification"/>
 		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableReturnTypeHintSpecification"/>
 		<exclude name="SlevomatCodingStandard.Functions.TrailingCommaInCall.MissingTrailingComma"/><!-- PHP 7.3 -->
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing">
+		<properties>
+			<property name="linesCountBetweenMembers" type="int" value="2"/>
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Classes.MethodSpacing">
+		<properties>
+			<property name="minLinesCount" type="int" value="2"/>
+			<property name="maxLinesCount" type="int" value="2"/>
+		</properties>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
