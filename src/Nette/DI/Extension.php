@@ -23,6 +23,7 @@ class Extension extends Nette\DI\CompilerExtension
 		'debugger' => NULL,
 		'explain' => FALSE,
 		'notices' => FALSE,
+		'longQueryTime' => NULL,
 	];
 
 	/** @var bool */
@@ -104,11 +105,12 @@ class Extension extends Nette\DI\CompilerExtension
 				PhPgSql\Tracy\Panel::class . '::renderException',
 			]);
 			if ($this->debugMode) {
-				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
+				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
 					'@self',
 					$name,
 					$config['explain'],
 					$config['notices'],
+					$config['longQueryTime'],
 				]);
 			}
 		}

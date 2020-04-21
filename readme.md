@@ -56,6 +56,7 @@ database:
     debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
     explain: yes # default is no (when yes, if Tracy panel is enabled, explain is shown for every query) 
     notices: yes # default is no (when yes, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
+    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time) 
 ```
 
 Or multiple connections:

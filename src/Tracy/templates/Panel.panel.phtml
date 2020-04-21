@@ -4,55 +4,94 @@ namespace Forrest79\PhPgSql\Tracy;
 
 ?>
 <style class="tracy-debug">
-	#tracy-debug td.phpgsql-panel-sql { background: white !important }
-	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre }
-	#tracy-debug .phpgsql-panel-explain td { font-size: 11px }
+	#tracy-debug td.phpgsql-panel-sql { background: white !important; }
+	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre; }
+	#tracy-debug .phpgsql-panel-explain td { font-size: 11px; }
+	#tracy-debug .phpgsql-panel-error { color: #f33; }
+	#tracy-debug div.phpgsql-panel-errors { font-size: 11px; margin: 5px 0 10px; }
+	#tracy-debug div.phpgsql-panel-errors span { display: inline-block; padding: 3px; background-color: #f33; color: #fff; border-radius: 3px; }
+	#tracy-debug div.phpgsql-panel-errors span a { color: #fff; text-decoration: underline; }
+	#tracy-debug div.phpgsql-panel-errors span a:hover { background-color: #f33; text-decoration: none; }
 </style>
 
-<h1>Queries: <?php echo $count, ($totalTime ? sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
+<h1>Queries: <?php echo $count, ($totalTime ? \sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', \htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
+
+<?php if ($longQueryCount > 0): ?>
+	<div class="phpgsql-panel-errors">
+		<span>
+			<?php if ($longQueryCount > 1): ?>
+				There are some long run queries
+			<?php else: ?>
+				<a href="#phpgsql-panel-long-run-query">There is one long run query</a>
+			<?php endif ?>
+		</span>
+	</div>
+<?php endif ?>
 
 <div class="tracy-inner">
 	<table>
-		<tr><th>Time&nbsp;ms</th><th>SQL Query</th><th>Params</th></tr>
-		<?php
-		foreach ($queries as $query):
-			[$sql, $params, $bindedSql, $time, $explain] = $query;
-		?>
 		<tr>
-		<td>
-		<?php if ($time === FALSE): echo '-'; elseif ($time !== NULL): echo sprintf('%0.3f', $time * 1000); else: echo '<em>async</em>'; endif ?>
-		<?php if ($bindedSql): ?>
-			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-binded">binded</a>
-		<?php endif ?>
-		<?php if ($explain): ?>
-			<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-explain">explain</a>
-		<?php endif ?>
-		</td>
-		<td class="phpgsql-panel-sql"><?= $sql ?>
-		<?php if ($bindedSql): ?>
-			<table class="tracy-collapsed phpgsql-panel-binded">
+			<th>Time&nbsp;ms</th>
+			<th>SQL Query</th>
+			<th>Params</th>
+		</tr>
+		<?php
+			foreach ($queries as $query):
+				[$sql, $params, $bindedSql, $time, $explain] = $query;
+		?>
 			<tr>
-				<th>Binded query:</th>
-			</tr>
-			<tr>
-				<td><?= $bindedSql ?></td>
-			</tr>
-			</table>
-		<?php endif ?>
-		<?php if ($explain): ?>
-			<table class="tracy-collapsed phpgsql-panel-explain">
-			<tr>
-				<th>Explain:</th>
-			</tr>
-			<tr>
-				<td><?php foreach ($explain as $row): ?><?= htmlspecialchars($row['QUERY PLAN'], ENT_NOQUOTES, 'UTF-8') ?><br><?php endforeach ?></td>
-			</tr>
-			</table>
-		<?php endif ?>
-		</td>
-		<td>
-		<?= $params ?>
-		</td>
+				<td>
+					<?php
+						if ($time === FALSE) {
+							echo '-';
+						} else if ($time !== NULL) {
+							$formattedTime = \sprintf('%0.3f', $time * 1000);
+							if (($longQueryTime !== NULL) && ($time >= $longQueryTime)) {
+								echo \sprintf('<strong %sclass="phpgsql-panel-error">%s</strong>', $longQueryCount === 1 ? 'id="phpgsql-panel-long-run-query" ' : '', $formattedTime);
+							} else {
+								echo $formattedTime;
+							}
+						} else {
+							echo '<em>async</em>';
+						}
+					?>
+				<?php if ($bindedSql): ?>
+					<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-binded">binded</a>
+				<?php endif ?>
+				<?php if ($explain): ?>
+					<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-explain">explain</a>
+				<?php endif ?>
+				</td>
+			<td class="phpgsql-panel-sql">
+				<?php echo $sql; ?>
+				<?php if ($bindedSql): ?>
+					<table class="tracy-collapsed phpgsql-panel-binded">
+						<tr>
+							<th>Binded query:</th>
+						</tr>
+						<tr>
+							<td><?php echo $bindedSql; ?></td>
+						</tr>
+					</table>
+				<?php endif ?>
+				<?php if ($explain): ?>
+					<table class="tracy-collapsed phpgsql-panel-explain">
+						<tr>
+							<th>Explain:</th>
+						</tr>
+						<tr>
+							<td>
+								<?php foreach ($explain as $row): ?>
+									<?php echo \htmlspecialchars($row['QUERY PLAN'], ENT_NOQUOTES, 'UTF-8'); ?><br>
+								<?php endforeach ?>
+							</td>
+						</tr>
+					</table>
+				<?php endif ?>
+			</td>
+			<td>
+				<?php echo $params; ?>
+			</td>
 		</tr>
 		<?php endforeach ?>
 	</table>

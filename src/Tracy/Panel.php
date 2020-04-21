@@ -17,7 +17,10 @@ class Panel implements Tracy\IBarPanel
 	/** @var string */
 	private $name;
 
-	/** @var float */
+	/** @var float|NULL in seconds */
+	private $longQueryTime;
+
+	/** @var float in seconds */
 	private $totalTime = 0;
 
 	/** @var int */
@@ -26,11 +29,20 @@ class Panel implements Tracy\IBarPanel
 	/** @var array<int, mixed> */
 	private $queries = [];
 
+	/** @var int */
+	private $longQueryCount = 0;
+
 	/** @var bool */
 	private $disableLogQuery = FALSE;
 
 
-	private function __construct(PhPgSql\Db\Connection $connection, string $name, bool $explain = FALSE, bool $notices = FALSE)
+	private function __construct(
+		PhPgSql\Db\Connection $connection,
+		string $name,
+		bool $explain = FALSE,
+		bool $notices = FALSE,
+		?float $longQueryTime = NULL
+	)
 	{
 		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
 			$this->logQuery($query, $time, $explain);
@@ -46,6 +58,7 @@ class Panel implements Tracy\IBarPanel
 
 		$this->connection = $connection;
 		$this->name = $name;
+		$this->longQueryTime = $longQueryTime;
 	}
 
 
@@ -59,6 +72,10 @@ class Panel implements Tracy\IBarPanel
 
 		if ($time !== NULL) {
 			$this->totalTime += $time;
+		}
+
+		if (($this->longQueryTime !== NULL) && ($time >= $this->longQueryTime)) {
+			$this->longQueryCount++;
 		}
 
 		$params = $query->getParams();
@@ -123,9 +140,15 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
-	public static function initializePanel(PhPgSql\Db\Connection $connection, string $name, bool $explain, bool $notices): self
+	public static function initializePanel(
+		PhPgSql\Db\Connection $connection,
+		string $name,
+		bool $explain,
+		bool $notices,
+		?float $longQueryTime = NULL
+	): self
 	{
-		$panel = new self($connection, $name, $explain, $notices);
+		$panel = new self($connection, $name, $explain, $notices, $longQueryTime);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}
@@ -198,8 +221,12 @@ class Panel implements Tracy\IBarPanel
 		$name = $this->name;
 		$count = $this->count;
 		$totalTime = $this->totalTime;
+
+		$longQueryCount = $this->longQueryCount;
+
 		\ob_start(static function (): void {
 		});
+
 		require __DIR__ . '/templates/Panel.tab.phtml';
 
 		$data = \ob_get_clean();
@@ -219,8 +246,13 @@ class Panel implements Tracy\IBarPanel
 		$totalTime = $this->totalTime;
 		$queries = $this->queries;
 
+		$longQueryTime = $this->longQueryTime;
+
+		$longQueryCount = $this->longQueryCount;
+
 		\ob_start(static function (): void {
 		});
+
 		require __DIR__ . '/templates/Panel.panel.phtml';
 
 		$data = \ob_get_clean();
