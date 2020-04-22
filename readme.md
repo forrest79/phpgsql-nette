@@ -49,14 +49,15 @@ database:
     defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
     dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
     dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needed to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is NULL and cache is disabled
-    forceNew: yes # default is no
-    async: yes # default is no
-    lazy: no # default is yes
-    autowired: no # default is yes (for second and next connection is always no)
-    debugger: no # default is yes (when yes, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
-    explain: yes # default is no (when yes, if Tracy panel is enabled, explain is shown for every query) 
-    notices: yes # default is no (when yes, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
-    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time) 
+    forceNew: true # default is false
+    async: true # default is false, when true, connection is made in async way and it's not blocking next PHP code execution (before first query is run, library is waiting for active connection)
+    lazy: false # default is true, when false, connection is made right after Connection object is created, when true, connection is made with the first query
+    autowired: false # default is true (for second and next connection is always false)
+    debugger: false # default is true (when true, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
+    explain: true # default is false (when true, if Tracy panel is enabled, explain is shown for every query) 
+    notices: true # default is false (when true, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
+    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time)
+    repeatingQueries: true # default is FALSE (when true, if Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)   
 ```
 
 Or multiple connections:

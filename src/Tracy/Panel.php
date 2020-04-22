@@ -3,7 +3,6 @@
 namespace Forrest79\PhPgSql\Tracy;
 
 use Forrest79\PhPgSql;
-use Nette;
 use Tracy;
 
 class Panel implements Tracy\IBarPanel
@@ -20,6 +19,9 @@ class Panel implements Tracy\IBarPanel
 	/** @var float|NULL in seconds */
 	private $longQueryTime;
 
+	/** @var bool */
+	private $detectRepeatingQueries;
+
 	/** @var float in seconds */
 	private $totalTime = 0;
 
@@ -32,6 +34,12 @@ class Panel implements Tracy\IBarPanel
 	/** @var int */
 	private $longQueryCount = 0;
 
+	/** @var array<string, int> */
+	private $queriesCount = [];
+
+	/** @var array<string, int>|NULL */
+	private $repeatingQueries = NULL;
+
 	/** @var bool */
 	private $disableLogQuery = FALSE;
 
@@ -41,7 +49,8 @@ class Panel implements Tracy\IBarPanel
 		string $name,
 		bool $explain = FALSE,
 		bool $notices = FALSE,
-		?float $longQueryTime = NULL
+		?float $longQueryTime = NULL,
+		bool $detectRepeatingQueries = FALSE
 	)
 	{
 		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
@@ -59,6 +68,7 @@ class Panel implements Tracy\IBarPanel
 		$this->connection = $connection;
 		$this->name = $name;
 		$this->longQueryTime = $longQueryTime;
+		$this->detectRepeatingQueries = $detectRepeatingQueries;
 	}
 
 
@@ -78,14 +88,11 @@ class Panel implements Tracy\IBarPanel
 			$this->longQueryCount++;
 		}
 
-		$params = $query->getParams();
-		$this->queries[] = [
-			PhPgSql\Db\Helper::dump($query->getSql()),
-			($params !== [] ? Tracy\Debugger::dump(self::printParams($params), TRUE) : NULL), // @hack surrounding parentheses are because of phpcs
-			($params !== [] ? PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams()) : NULL), // @hack surrounding parentheses are because of phpcs
-			$time,
-			$explain ? self::explain($query) : [],
-		];
+		if ($this->detectRepeatingQueries && !(bool) \preg_match('#^\s*(BEGIN|COMMIT|ROLLBACK|SET)#i', $query->getSql())) {
+			$this->queriesCount[$query->getSql()] = ($this->queriesCount[$query->getSql()] ?? 0) + 1;
+		}
+
+		$this->queries[] = [$query, $time, $explain ? self::explain($query) : NULL];
 	}
 
 
@@ -105,8 +112,6 @@ class Panel implements Tracy\IBarPanel
 						return '<em>Notice:</em><br>' . \substr($notice, 9);
 					}, \array_map('nl2br', $notices)))
 				),
-				NULL,
-				NULL,
 				FALSE,
 				NULL,
 			];
@@ -140,89 +145,13 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
-	public static function initializePanel(
-		PhPgSql\Db\Connection $connection,
-		string $name,
-		bool $explain,
-		bool $notices,
-		?float $longQueryTime = NULL
-	): self
-	{
-		$panel = new self($connection, $name, $explain, $notices, $longQueryTime);
-		Tracy\Debugger::getBar()->addPanel($panel);
-		return $panel;
-	}
-
-
-	/**
-	 * @return array<string, string>|NULL
-	 */
-	public static function renderException(?\Throwable $e): ?array
-	{
-		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
-			return NULL;
-		}
-
-		$query = $e->getQuery();
-		if ($query === NULL) {
-			return NULL;
-		}
-
-		$parameters = '';
-		$params = $query->getParams();
-		if ($params !== []) {
-			$parameters = \sprintf('
-				<h3>Parameters:</h3>
-				<pre>%s</pre>
-			', Tracy\Dumper::toHtml(
-				self::printParams($params),
-				[
-					Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
-					Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
-				]
-			));
-		}
-
-		return [
-			'tab' => 'SQL',
-			'panel' => \sprintf('
-				<h3>Query:</h3>
-				<pre>%s</pre>
-
-				%s
-
-				<h3>Binded query:</h3>
-				<pre>%s</pre>
-			', PhPgSql\Db\Helper::dump($query->getSql()), $parameters, PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams())),
-		];
-	}
-
-
-	/**
-	 * @param array<mixed> $params
-	 * @return array<string, mixed>
-	 */
-	private static function printParams(array $params): array
-	{
-		$keys = \range(1, \count($params));
-		\array_walk($keys, static function (&$value): void {
-			$value = '$' . $value;
-		});
-		$paramsToPrint = \array_combine($keys, \array_values($params));
-		if ($paramsToPrint === FALSE) {
-			throw new Nette\InvalidArgumentException();
-		}
-		return $paramsToPrint;
-	}
-
-
 	public function getTab(): string
 	{
 		$name = $this->name;
 		$count = $this->count;
 		$totalTime = $this->totalTime;
 
-		$longQueryCount = $this->longQueryCount;
+		$hasWarning = ($this->longQueryCount > 0) || (\count($this->getRepeatingQueries()) > 0);
 
 		\ob_start(static function (): void {
 		});
@@ -249,6 +178,15 @@ class Panel implements Tracy\IBarPanel
 		$longQueryTime = $this->longQueryTime;
 
 		$longQueryCount = $this->longQueryCount;
+		$repeatingQueries = $this->getRepeatingQueries();
+
+		$queryDump = static function (string $sql, array $parameters = []): string {
+			return PhPgSql\Db\Helper::dump($sql, $parameters);
+		};
+
+		$paramsDump = static function (array $parameters): string {
+			return self::paramsDump($parameters);
+		};
 
 		\ob_start(static function (): void {
 		});
@@ -258,6 +196,106 @@ class Panel implements Tracy\IBarPanel
 		$data = \ob_get_clean();
 
 		return $data === FALSE ? '' : $data;
+	}
+
+
+	/**
+	 * @return array<string, int>
+	 */
+	private function getRepeatingQueries(): array
+	{
+		if ($this->repeatingQueries === NULL) {
+			$this->repeatingQueries = \array_filter($this->queriesCount, static function (int $count): bool {
+				return $count > 1;
+			});
+			\arsort($this->repeatingQueries);
+		}
+
+		return $this->repeatingQueries;
+	}
+
+
+	/**
+	 * @param array<mixed> $params
+	 */
+	private static function paramsDump(array $params): string
+	{
+		return Tracy\Dumper::toHtml(
+			self::printParams($params),
+			[
+				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
+				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
+			]
+		);
+	}
+
+
+	/**
+	 * @param array<mixed> $params
+	 * @return array<string, mixed>
+	 */
+	private static function printParams(array $params): array
+	{
+		$keys = \range(1, \count($params));
+
+		\array_walk($keys, static function (&$value): void {
+			$value = '$' . $value;
+		});
+
+		return (array) \array_combine($keys, \array_values($params));
+	}
+
+
+	public static function initializePanel(
+		PhPgSql\Db\Connection $connection,
+		string $name,
+		bool $explain,
+		bool $notices,
+		?float $longQueryTime = NULL,
+		bool $detectRepeatingQueries = FALSE
+	): self
+	{
+		$panel = new self($connection, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries);
+		Tracy\Debugger::getBar()->addPanel($panel);
+		return $panel;
+	}
+
+
+	/**
+	 * @return array<string, string>|NULL
+	 */
+	public static function renderException(?\Throwable $e): ?array
+	{
+		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
+			return NULL;
+		}
+
+		$query = $e->getQuery();
+		if ($query === NULL) {
+			return NULL;
+		}
+
+		$parameters = '';
+		$params = $query->getParams();
+		if ($params !== []) {
+			$parameters = \sprintf('
+				<h3>Parameters:</h3>
+				<pre>%s</pre>
+			', self::paramsDump($params));
+		}
+
+		return [
+			'tab' => 'SQL',
+			'panel' => \sprintf('
+				<h3>Query:</h3>
+				<pre>%s</pre>
+
+				%s
+
+				<h3>Binded query:</h3>
+				<pre>%s</pre>
+			', PhPgSql\Db\Helper::dump($query->getSql()), $parameters, PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams())),
+		];
 	}
 
 }
