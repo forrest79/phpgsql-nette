@@ -25,6 +25,7 @@ class Extension extends Nette\DI\CompilerExtension
 		'notices' => FALSE,
 		'longQueryTime' => NULL,
 		'repeatingQueries' => FALSE,
+		'nonParsedColumns' => FALSE,
 	];
 
 	/** @var bool */
@@ -106,13 +107,14 @@ class Extension extends Nette\DI\CompilerExtension
 				PhPgSql\Tracy\Panel::class . '::renderException',
 			]);
 			if ($this->debugMode) {
-				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
+				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
 					'@self',
 					$name,
 					$config['explain'],
 					$config['notices'],
 					$config['longQueryTime'],
 					$config['repeatingQueries'],
+					$config['nonParsedColumns'],
 				]);
 			}
 		}

@@ -57,7 +57,8 @@ database:
     explain: true # default is false (when true, if Tracy panel is enabled, explain is shown for every query) 
     notices: true # default is false (when true, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
     longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time)
-    repeatingQueries: true # default is FALSE (when true, if Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)   
+    repeatingQueries: true # default is FALSE (when true, if Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
+    nonParsedColumns: true # default is FALSE (when true, if Tracy panel is enabled, queries with some non parsed (used) columns are detected and listed)
 ```
 
 Or multiple connections:

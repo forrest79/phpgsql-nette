@@ -40,6 +40,12 @@ class Panel implements Tracy\IBarPanel
 	/** @var array<string, int>|NULL */
 	private $repeatingQueries = NULL;
 
+	/** @var array<PhPgSql\Db\Result> */
+	private $results = [];
+
+	/** @var array<array<mixed>>|NULL */
+	private $nonParsedColumnsQueries = NULL;
+
 	/** @var bool */
 	private $disableLogQuery = FALSE;
 
@@ -50,18 +56,26 @@ class Panel implements Tracy\IBarPanel
 		bool $explain = FALSE,
 		bool $notices = FALSE,
 		?float $longQueryTime = NULL,
-		bool $detectRepeatingQueries = FALSE
+		bool $detectRepeatingQueries = FALSE,
+		bool $detectNonParsedColumns = FALSE
 	)
 	{
 		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
 			$this->logQuery($query, $time, $explain);
 		});
+
 		if ($notices) {
 			$connection->addOnQuery(function (PhPgSql\Db\Connection $connection): void {
 				$this->logNotices($connection);
 			});
 			$connection->addOnClose(function (PhPgSql\Db\Connection $connection): void {
 				$this->logNotices($connection);
+			});
+		}
+
+		if ($detectNonParsedColumns) {
+			$connection->addOnResult(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Result $result): void {
+				$this->results[] = $result;
 			});
 		}
 
@@ -151,7 +165,7 @@ class Panel implements Tracy\IBarPanel
 		$count = $this->count;
 		$totalTime = $this->totalTime;
 
-		$hasWarning = ($this->longQueryCount > 0) || (\count($this->getRepeatingQueries()) > 0);
+		$hasWarning = ($this->longQueryCount > 0) || (\count($this->getRepeatingQueries()) > 0) || (\count($this->getNonParsedColumnsQueries()) > 0);
 
 		\ob_start(static function (): void {
 		});
@@ -179,6 +193,7 @@ class Panel implements Tracy\IBarPanel
 
 		$longQueryCount = $this->longQueryCount;
 		$repeatingQueries = $this->getRepeatingQueries();
+		$nonParsedColumnsQueries = $this->getNonParsedColumnsQueries();
 
 		$queryDump = static function (string $sql, array $parameters = []): string {
 			return PhPgSql\Db\Helper::dump($sql, $parameters);
@@ -212,6 +227,30 @@ class Panel implements Tracy\IBarPanel
 		}
 
 		return $this->repeatingQueries;
+	}
+
+
+	/**
+	 * @return array<array<mixed>>
+	 */
+	private function getNonParsedColumnsQueries(): array
+	{
+		if ($this->nonParsedColumnsQueries === NULL) {
+			$this->nonParsedColumnsQueries = [];
+
+			/** @var PhPgSql\Db\Result $result */
+			foreach ($this->results as $result) {
+				$nonParsedColumns = \array_filter($result->getParsedColumns() ?? [], static function (bool $isUsed): bool {
+					return !$isUsed;
+				});
+
+				if ($nonParsedColumns !== []) {
+					$this->nonParsedColumnsQueries[] = [$result->getQuery(), \array_keys($nonParsedColumns)];
+				}
+			}
+		}
+
+		return $this->nonParsedColumnsQueries;
 	}
 
 
@@ -252,10 +291,11 @@ class Panel implements Tracy\IBarPanel
 		bool $explain,
 		bool $notices,
 		?float $longQueryTime = NULL,
-		bool $detectRepeatingQueries = FALSE
+		bool $detectRepeatingQueries = FALSE,
+		bool $detectNonParsedColumns = FALSE
 	): self
 	{
-		$panel = new self($connection, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries);
+		$panel = new self($connection, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}
