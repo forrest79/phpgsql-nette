@@ -28,7 +28,7 @@ class Panel implements Tracy\IBarPanel
 	/** @var int */
 	private $count = 0;
 
-	/** @var array<int, mixed> */
+	/** @var array<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL}> */
 	private $queries = [];
 
 	/** @var int */
@@ -43,7 +43,7 @@ class Panel implements Tracy\IBarPanel
 	/** @var array<PhPgSql\Db\Result> */
 	private $results = [];
 
-	/** @var array<array<mixed>>|NULL */
+	/** @var array<array{0: PhPgSql\Db\Query, 1: array<string>}>|NULL */
 	private $nonParsedColumnsQueries = NULL;
 
 	/** @var bool */
@@ -134,7 +134,7 @@ class Panel implements Tracy\IBarPanel
 
 
 	/**
-	 * @return array<PhPgSql\Db\Row>|null
+	 * @return array<PhPgSql\Db\Row>|NULL
 	 */
 	private function explain(PhPgSql\Db\Query $query): ?array
 	{
@@ -302,7 +302,7 @@ class Panel implements Tracy\IBarPanel
 
 
 	/**
-	 * @return array<string, string>|NULL
+	 * @return array{tab: string, panel: string}|NULL
 	 */
 	public static function renderException(?\Throwable $e): ?array
 	{

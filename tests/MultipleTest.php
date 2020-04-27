@@ -6,12 +6,12 @@ use Forrest79\PhPgSql;
 use Nette\DI;
 use Tester;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/TestCase.php';
 
 /**
  * @testCase
  */
-class MultipleTest extends Tester\TestCase
+class MultipleTest extends TestCase
 {
 
 	public function testBasic(): void
