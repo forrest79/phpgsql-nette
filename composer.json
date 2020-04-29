@@ -32,5 +32,11 @@
 		"psr-4": {
 			"Forrest79\\PhPgSql\\Tests\\": "tests/"
 		}
+	},
+	"scripts": {
+		"tests": "tests/run-tests tests",
+		"coverage": "tests/collect-coverage tests",
+		"phpcs": "vendor/bin/phpcs -s src tests",
+		"phpstan": "vendor/bin/phpstan analyse src tests"
 	}
 }
