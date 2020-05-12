@@ -78,7 +78,7 @@ class Extension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param array<string, mixed> $configs
+	 * @param array<string, mixed> $configs @todo \stdClass after Nette 2.4 will be dropped
 	 */
 	private function loadConfiguration30(array $configs): void
 	{
@@ -205,17 +205,14 @@ class Extension extends Nette\DI\CompilerExtension
 				'explain' => Schema\Expect::bool(FALSE),
 				'notices' => Schema\Expect::bool(FALSE),
 			])
-		)->before(static function ($val) {
-			foreach ($val as $key => $values) {
-				if ($key === 'errorVerbosity') {
-					if (!isset($val['autowired'])) {
-						$val['autowired'] = TRUE;
-					}
-					$val = ['default' => $val];
-					break;
+		)->before(static function ($config) {
+			foreach ($config as $values) {
+				if (\is_scalar($values)) {
+					$config = ['default' => $config];
 				}
+				break;
 			}
-			return $val;
+			return $config;
 		});
 	}
 
