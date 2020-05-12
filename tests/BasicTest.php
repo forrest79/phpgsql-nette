@@ -19,6 +19,7 @@ class BasicTest extends TestCase
 		$loader = new DI\Config\Loader();
 		$config = $loader->load(Tester\FileMock::create('
 		database:
+			debugger: false
 			config:
 				host: localhost
 				port: 5432
@@ -26,8 +27,7 @@ class BasicTest extends TestCase
 				password: postgres
 				dbname: postgres
 				connect_timeout: 5
-			debugger: no
-			lazy: yes
+			lazy: true
 		', 'neon'));
 
 		$containerName = 'Container' . \uniqid();

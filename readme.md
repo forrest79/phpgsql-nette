@@ -81,7 +81,9 @@ database:
             dbname: postgres
 ```
 
-First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. Or can be get by:
+First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. If you want to autowired other connection or none connection, you must explicitly set `autowired: false`.
+
+You can also get connection by:
 
 ```php
 $container->getService('database.default.connection'); // for one connection, default

@@ -26,8 +26,8 @@ class MultipleTest extends TestCase
 					user: postgres
 					password: postgres
 					dbname: postgres
-				debugger: no
-				lazy: yes
+				debugger: false
+				lazy: true
 
 			second:
 				config:
@@ -36,8 +36,8 @@ class MultipleTest extends TestCase
 					user: postgres
 					password: postgres
 					dbname: postgres
-				debugger: no
-				lazy: yes
+				debugger: false
+				lazy: true
 		', 'neon'));
 
 		$compiler = new DI\Compiler();
