@@ -215,8 +215,8 @@ class Extension extends Nette\DI\CompilerExtension
 				'nonParsedColumns' => Schema\Expect::bool(FALSE),
 			])
 		)->before(static function ($config) {
-			foreach ($config as $values) {
-				if (\is_scalar($values)) {
+			foreach ($config as $name => $values) {
+				if (\is_scalar($values) || (\is_array($values) && $name === 'config')) {
 					$config = ['default' => $config];
 					break;
 				}

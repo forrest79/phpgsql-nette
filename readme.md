@@ -81,6 +81,8 @@ database:
             dbname: postgres
 ```
 
+> IMPORTANT! You can't name connection as `config`. 
+
 First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. If you want to autowired other connection or none connection, you must explicitly set `autowired: false`.
 
 You can also get connection by:
