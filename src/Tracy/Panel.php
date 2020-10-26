@@ -262,6 +262,7 @@ class Panel implements Tracy\IBarPanel
 		return Tracy\Dumper::toHtml(
 			self::printParams($params),
 			[
+				Tracy\Dumper::LAZY => FALSE,
 				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
 				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
 			]
