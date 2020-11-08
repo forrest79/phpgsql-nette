@@ -165,7 +165,9 @@ class Panel implements Tracy\IBarPanel
 		$count = $this->count;
 		$totalTime = $this->totalTime;
 
-		$hasWarning = ($this->longQueryCount > 0) || (\count($this->getRepeatingQueries()) > 0) || (\count($this->getNonParsedColumnsQueries()) > 0);
+		$hasLongQuery = $this->longQueryCount > 0;
+		$hasRepeatingQueries = \count($this->getRepeatingQueries()) > 0;
+		$hasNonParsedColumns = \count($this->getNonParsedColumnsQueries()) > 0;
 
 		\ob_start(static function (): void {
 		});
