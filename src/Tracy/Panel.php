@@ -278,13 +278,14 @@ class Panel implements Tracy\IBarPanel
 	 */
 	private static function printParams(array $params): array
 	{
-		$keys = \range(1, \count($params));
+		$printParams = [];
 
-		\array_walk($keys, static function (&$value): void {
-			$value = '$' . $value;
-		});
+		$i = 1;
+		foreach ($params as $param) {
+			$printParams['$' . $i++] = $param;
+		}
 
-		return (array) \array_combine($keys, \array_values($params));
+		return $printParams;
 	}
 
 
