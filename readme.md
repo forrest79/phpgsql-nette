@@ -1,6 +1,8 @@
 # PhPgSql - Nette
 
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/forrest79/PhPgSql-Nette/blob/master/license.md)
+[![Latest Stable Version](https://poser.pugx.org/forrest79/phpgsql-nette/v)](//packagist.org/packages/forrest79/phpgsql-nette)
+[![Monthly Downloads](https://poser.pugx.org/forrest79/phpgsql-nette/d/monthly)](//packagist.org/packages/forrest79/phpgsql-nette)
+[![License](https://poser.pugx.org/forrest79/phpgsql-nette/license)](//packagist.org/packages/forrest79/phpgsql-nette)
 [![Build](https://github.com/forrest79/PhPgSql-Nette/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/PhPgSql-Nette/actions/workflows/build.yml)
 
 * [Nette](https://nette.org)
@@ -43,7 +45,7 @@ database:
         user: postgres
         password: postgres
         dbname: postgres
-        connect_timeout: 5 # good habit is to use connect_timeout parameter 
+        connect_timeout: 5 # good habit is to use connect_timeout parameter
     errorVerbosity: ::constant(PGSQL_ERRORS_VERBOSE) # default is NULL and it will use default error verbose PGSQL_ERRORS_DEFAULT, other value can be PGSQL_ERRORS_TERSE
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
     defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
@@ -54,8 +56,8 @@ database:
     lazy: false # default is true, when false, connection is made right after Connection object is created, when true, connection is made with the first query
     autowired: false # default is true (for second and next connection is always false)
     debugger: false # default is true (when true, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
-    explain: true # default is false (when true, if Tracy panel is enabled, explain is shown for every query) 
-    notices: true # default is false (when true, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log) 
+    explain: true # default is false (when true, if Tracy panel is enabled, explain is shown for every query)
+    notices: true # default is false (when true, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log)
     longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time)
     repeatingQueries: true # default is FALSE (when true, if Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
     nonParsedColumns: true # default is FALSE (when true, if Tracy panel is enabled, queries with some non parsed (used) columns are detected and listed)
@@ -81,7 +83,7 @@ database:
             dbname: postgres
 ```
 
-> IMPORTANT! You can't name connection as `config`. 
+> IMPORTANT! You can't name connection as `config`.
 
 First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. If you want to autowired other connection or none connection, you must explicitly set `autowired: false`.
 
@@ -117,7 +119,7 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
     }
 
     /**
-     * In `$config` array are all values from connection config definition, you can use some special/meta values for your own logic and unset it from `$config` before sending it to `prepareConfig()` function. 
+     * In `$config` array are all values from connection config definition, you can use some special/meta values for your own logic and unset it from `$config` before sending it to `prepareConfig()` function.
      */
     public function create(array $config, bool $forceNew, bool $async): MyOwnConnection
     {
