@@ -10,7 +10,7 @@ use Tracy;
 class Extension extends Nette\DI\CompilerExtension
 {
 	/** @var array<string, mixed> */
-	public $defaults = [
+	private $defaults = [
 		'config' => [],
 		'forceNew' => FALSE,
 		'async' => FALSE,

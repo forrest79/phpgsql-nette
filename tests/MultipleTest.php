@@ -12,7 +12,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class MultipleTest extends TestCase
+final class MultipleTest extends TestCase
 {
 
 	public function testBasic(): void
