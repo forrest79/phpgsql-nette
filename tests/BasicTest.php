@@ -52,6 +52,7 @@ final class BasicTest extends TestCase
 		$loader = new DI\Config\Loader();
 		$config = $loader->load(Tester\FileMock::create($configNeon, 'neon'));
 
+		/** @var class-string<DI\Container> $containerName */
 		$containerName = 'Container' . \uniqid();
 
 		$compiler = new DI\Compiler();

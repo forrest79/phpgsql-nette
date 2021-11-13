@@ -81,7 +81,7 @@ class Extension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param array<string, mixed> $configs @todo \stdClass after Nette 2.4 will be dropped
+	 * @param array<string, \stdClass> $configs @todo \stdClass after Nette 2.4 will be dropped
 	 */
 	private function loadConfiguration30(array $configs): void
 	{
@@ -107,6 +107,7 @@ class Extension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($connectionFactory)
 			->setFactory(PhPgSql\Nette\Connection\FluentConnectionFactory::class);
 
+		assert(is_bool($config['autowired']));
 		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
 			->setFactory('@' . $connectionFactory . '::create', [
 				(array) $config['config'],

@@ -73,7 +73,10 @@ final class MultipleTest extends TestCase
 		$compiler = new DI\Compiler();
 		$compiler->addExtension('tracy', new Tracy\Bridges\Nette\TracyExtension());
 		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(FALSE));
+
+		/** @var class-string<DI\Container> $containerName */
 		$containerName = 'Container' . \uniqid();
+
 		eval($compiler->addConfig($config)->setClassName($containerName)->compile());
 
 		$container = new $containerName();

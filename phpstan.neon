@@ -4,6 +4,9 @@ includes:
 parameters:
 	level: max
 	ignoreErrors:
+		# === Dynamic container method ===
+		- '#Call to an undefined method Nette\\DI\\Container::initialize\(\)\.#'
+
 		# === This is OK for PHP >= 7.1 ===
 		-
 			message: '#Call to an undefined method ReflectionType::getName\(\)\.#'
