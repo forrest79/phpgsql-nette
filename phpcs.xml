@@ -2,16 +2,16 @@
 <ruleset name="PhPgSql-Nette">
 	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml"/>
 
-	<rule ref="Forrest79CodingStandard.Classes.ForceFinalClass.MissingFinal">
-		<exclude-pattern>src/*</exclude-pattern>
-	</rule>
-
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Classes.ForbiddenPublicProperty.ForbiddenPublicProperty">
 		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal">
+		<exclude-pattern>src/*</exclude-pattern>
 	</rule>
 
 	<!-- PHP 7.4 -->
