@@ -10,9 +10,10 @@ use Forrest79\PhPgSql;
 	#tracy-debug td.phpgsql-panel-center { text-align: center; }
 	#tracy-debug td.phpgsql-panel-sql { background: white !important; }
 	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre; }
-	#tracy-debug .phpgsql-panel-binded a { float: right; display: block; }
+	#tracy-debug .phpgsql-panel-binded th { position: relative; }
+	#tracy-debug .phpgsql-panel-binded a { position: absolute; display: block; right: 2px; top: 2px; }
 	#tracy-debug .phpgsql-panel-binded a:focus { background: none; }
-	#tracy-debug .phpgsql-panel-binded a svg { width: 16px; height: 16px; }
+	#tracy-debug .phpgsql-panel-binded a svg { width: 14px; height: 14px; padding: 2px 2px 0 2px; }
 	#tracy-debug .phpgsql-panel-explain td { font-size: 11px; }
 	#tracy-debug .phpgsql-panel-warning { color: #f33; }
 	#tracy-debug div.phpgsql-panel-warnings { font-size: 11px; margin: 5px 0 10px; }
@@ -22,13 +23,12 @@ use Forrest79\PhPgSql;
 </style>
 
 <script type="text/javascript">
-	const phpgsqlSvgOk = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.881 89.842" xml:space="preserve"><g><path d="M1.232,55.541c-1.533-1.388-1.652-3.756-0.265-5.289c1.388-1.534,3.756-1.652,5.29-0.265l34.053,30.878l76.099-79.699 c1.429-1.501,3.804-1.561,5.305-0.132c1.502,1.428,1.561,3.803,0.133,5.305L43.223,88.683l-0.005-0.005 c-1.396,1.468-3.716,1.563-5.227,0.196L1.232,55.541L1.232,55.541z"/></g></svg>';
-	const phpgsqlCopyToClipboard = function (copyButton) {
+	window.phpgsqlCopyToClipboard = function (copyButton) {
 		const sql = copyButton.closest('table').querySelector('td').innerText.trim();
 		navigator.clipboard.writeText(sql);
 
 		const svgCopy = copyButton.innerHTML;
-		copyButton.innerHTML = phpgsqlSvgOk;
+		copyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.881 89.842" xml:space="preserve"><g><path d="M1.232,55.541c-1.533-1.388-1.652-3.756-0.265-5.289c1.388-1.534,3.756-1.652,5.29-0.265l34.053,30.878l76.099-79.699 c1.429-1.501,3.804-1.561,5.305-0.132c1.502,1.428,1.561,3.803,0.133,5.305L43.223,88.683l-0.005-0.005 c-1.396,1.468-3.716,1.563-5.227,0.196L1.232,55.541L1.232,55.541z"/></g></svg>';
 		setTimeout(function () {
 			copyButton.innerHTML = svgCopy;
 		}, 1000);
@@ -118,7 +118,7 @@ use Forrest79\PhPgSql;
 								<th>
 									Binded query:
 									<a href="javascript:void(0);" onclick="phpgsqlCopyToClipboard(this);" title="Copy to clipboard">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg>
 									</a>
 								</th>
 							</tr>
