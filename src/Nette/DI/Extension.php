@@ -188,7 +188,7 @@ class Extension extends Nette\DI\CompilerExtension
 			}
 
 			$service = $builder->getDefinition($this->prefix(\sprintf('%s.connection', $name)));
-			\assert($service instanceof Nette\DI\ServiceDefinition);
+			\assert($service instanceof Nette\DI\Definitions\ServiceDefinition);
 			$service->setType($connectionType);
 		}
 	}
