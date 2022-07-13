@@ -3,12 +3,14 @@
 namespace Forrest79\PhPgSql\Tracy;
 
 use Forrest79\PhPgSql;
+use Tracy\Helpers;
 
 ?>
 <style>
 	#tracy-debug div.phpgsql-panel h2 { font-size: 20px; margin: 10px 0 0; }
 	#tracy-debug td.phpgsql-panel-center { text-align: center; }
 	#tracy-debug td.phpgsql-panel-sql { background: white !important; }
+	#tracy-debug a.phpgsql-panel-source { color: #bbb !important }
 	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre; }
 	#tracy-debug .phpgsql-panel-binded th { position: relative; }
 	#tracy-debug .phpgsql-panel-binded a { position: absolute; display: block; right: 2px; top: 2px; }
@@ -83,7 +85,7 @@ use Forrest79\PhPgSql;
 		</tr>
 		<?php
 			foreach ($queries as $query):
-				[$sql, $time, $explain] = $query;
+				[$sql, $time, $explain, $source] = $query;
 
 				$hasParams = ($sql instanceof PhPgSql\Db\Query) && ($sql->getParams() !== []);
 		?>
@@ -137,6 +139,9 @@ use Forrest79\PhPgSql;
 							</tr>
 						</table>
 					<?php endif ?>
+					<?php if ($source !== NULL) {
+						echo substr_replace(Helpers::editorLink($source['file'], $source['line']), ' class="phpgsql-panel-source"', 2, 0);
+					} ?>
 				</td>
 				<td>
 					<?php if ($hasParams) echo $paramsDump($sql->getParams()); ?>

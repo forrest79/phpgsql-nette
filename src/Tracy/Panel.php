@@ -28,7 +28,7 @@ class Panel implements Tracy\IBarPanel
 	/** @var int */
 	private $count = 0;
 
-	/** @var array<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL}> */
+	/** @var array<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL, 3: array{file: string, line: int|NULL}|NULL}> */
 	private $queries = [];
 
 	/** @var int */
@@ -106,7 +106,27 @@ class Panel implements Tracy\IBarPanel
 			$this->queriesCount[$query->getSql()] = ($this->queriesCount[$query->getSql()] ?? 0) + 1;
 		}
 
-		$this->queries[] = [$query, $time, $explain ? self::explain($query) : NULL];
+		$source = NULL;
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		foreach ($trace as $row) {
+			if (
+				($row['class'] ?? '') !== self::class
+				&& !is_a($row['class'] ?? '', PhPgSql\Db\Events::class, TRUE)
+				&& !(is_a($row['class'] ?? '', PhPgSql\Db\Connection::class, TRUE) && in_array($row['function'], ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
+				&& !(is_a($row['class'] ?? '', PhPgSql\Fluent\QueryExecute::class, TRUE) && in_array($row['function'], ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
+			) {
+				break;
+			}
+
+			if (isset($row['file']) && is_file($row['file'])) {
+				$source = [
+					'file' => $row['file'],
+					'line' => $row['line'] ?? NULL,
+				];
+			}
+		}
+
+		$this->queries[] = [$query, $time, $explain ? self::explain($query) : NULL, $source];
 	}
 
 
@@ -127,6 +147,7 @@ class Panel implements Tracy\IBarPanel
 					}, \array_map('nl2br', $notices)))
 				),
 				FALSE,
+				NULL,
 				NULL,
 			];
 		}
