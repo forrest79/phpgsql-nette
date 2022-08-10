@@ -5,13 +5,16 @@ namespace Forrest79\PhPgSql\Tracy;
 use Forrest79\PhPgSql;
 use Tracy;
 
-class Panel implements Tracy\IBarPanel
+class BarPanel implements Tracy\IBarPanel
 {
 	/** @var bool */
 	public static $disabled = FALSE;
 
 	/** @var PhPgSql\Db\Connection */
 	private $connection;
+
+	/** @var PhPgSql\Tracy\QueryDumper */
+	private $queryDumper;
 
 	/** @var string */
 	private $name;
@@ -52,6 +55,7 @@ class Panel implements Tracy\IBarPanel
 
 	private function __construct(
 		PhPgSql\Db\Connection $connection,
+		PhPgSql\Tracy\QueryDumper $queryDumper,
 		string $name,
 		bool $explain = FALSE,
 		bool $notices = FALSE,
@@ -80,6 +84,7 @@ class Panel implements Tracy\IBarPanel
 		}
 
 		$this->connection = $connection;
+		$this->queryDumper = $queryDumper;
 		$this->name = $name;
 		$this->longQueryTime = $longQueryTime;
 		$this->detectRepeatingQueries = $detectRepeatingQueries;
@@ -193,7 +198,7 @@ class Panel implements Tracy\IBarPanel
 		\ob_start(static function (): void {
 		});
 
-		require __DIR__ . '/templates/Panel.tab.phtml';
+		require __DIR__ . '/templates/BarPanel.tab.phtml';
 
 		$data = \ob_get_clean();
 
@@ -218,18 +223,18 @@ class Panel implements Tracy\IBarPanel
 		$repeatingQueries = $this->getRepeatingQueries();
 		$nonParsedColumnsQueries = $this->getNonParsedColumnsQueries();
 
-		$queryDump = static function (string $sql, array $parameters = []): string {
-			return PhPgSql\Db\Helper::dump($sql, $parameters);
+		$queryDump = function (string $sql, array $parameters = []): string {
+			return \sprintf('<pre class="dump">%s</pre>', $this->queryDumper->dump($sql, $parameters));
 		};
 
 		$paramsDump = static function (array $parameters): string {
-			return self::paramsDump($parameters);
+			return Helper::dumpParameters($parameters);
 		};
 
 		\ob_start(static function (): void {
 		});
 
-		require __DIR__ . '/templates/Panel.panel.phtml';
+		require __DIR__ . '/templates/BarPanel.panel.phtml';
 
 		$data = \ob_get_clean();
 
@@ -277,41 +282,9 @@ class Panel implements Tracy\IBarPanel
 	}
 
 
-	/**
-	 * @param array<mixed> $params
-	 */
-	private static function paramsDump(array $params): string
-	{
-		return Tracy\Dumper::toHtml(
-			self::printParams($params),
-			[
-				Tracy\Dumper::LAZY => FALSE,
-				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
-				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
-			]
-		);
-	}
-
-
-	/**
-	 * @param array<mixed> $params
-	 * @return array<string, mixed>
-	 */
-	private static function printParams(array $params): array
-	{
-		$printParams = [];
-
-		$i = 1;
-		foreach ($params as $param) {
-			$printParams['$' . $i++] = $param;
-		}
-
-		return $printParams;
-	}
-
-
-	public static function initializePanel(
+	public static function initialize(
 		PhPgSql\Db\Connection $connection,
+		PhPgSql\Tracy\QueryDumper $queryDumper,
 		string $name,
 		bool $explain,
 		bool $notices,
@@ -320,47 +293,9 @@ class Panel implements Tracy\IBarPanel
 		bool $detectNonParsedColumns = FALSE
 	): self
 	{
-		$panel = new self($connection, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
+		$panel = new self($connection, $queryDumper, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
-	}
-
-
-	/**
-	 * @return array{tab: string, panel: string}|NULL
-	 */
-	public static function renderException(?\Throwable $e): ?array
-	{
-		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
-			return NULL;
-		}
-
-		$query = $e->getQuery();
-		if ($query === NULL) {
-			return NULL;
-		}
-
-		$parameters = '';
-		$params = $query->getParams();
-		if ($params !== []) {
-			$parameters = \sprintf('
-				<h3>Parameters:</h3>
-				<pre>%s</pre>
-			', self::paramsDump($params));
-		}
-
-		return [
-			'tab' => 'SQL',
-			'panel' => \sprintf('
-				<h3>Query:</h3>
-				<pre>%s</pre>
-
-				%s
-
-				<h3>Binded query:</h3>
-				<pre>%s</pre>
-			', PhPgSql\Db\Helper::dump($query->getSql()), $parameters, PhPgSql\Db\Helper::dump($query->getSql(), $query->getParams())),
-		];
 	}
 
 }

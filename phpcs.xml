@@ -7,7 +7,7 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Classes.ForbiddenPublicProperty.ForbiddenPublicProperty">
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal">
@@ -21,7 +21,7 @@
 
 	<!-- PHP 8.0 -->
 	<rule ref="SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch.NonCapturingCatchRequired">
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
@@ -36,16 +36,19 @@
 	<!-- PHP 8.0 -->
 	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma">
 		<exclude-pattern>src/Nette/DI/Extension.php</exclude-pattern>
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/Helper.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/QueryDumper.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/QueryDumpers/Basic.php</exclude-pattern>
 	</rule>
 
 	<!-- PHP 8.0 -->
 	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration.MissingTrailingComma">
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
 	</rule>
 
 	<!-- PHP 7.4 -->
@@ -59,7 +62,7 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable">
-		<exclude-pattern>src/Tracy/Panel.php</exclude-pattern>
+		<exclude-pattern>src/Tracy/BarPanel.php</exclude-pattern>
 	</rule>
 
 	<rule ref="Squiz.Scope.MethodScope.Missing">

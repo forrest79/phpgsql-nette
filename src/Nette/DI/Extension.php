@@ -2,6 +2,7 @@
 
 namespace Forrest79\PhPgSql\Nette\DI;
 
+use Doctrine;
 use Forrest79\PhPgSql;
 use Nette;
 use Nette\Schema;
@@ -22,6 +23,7 @@ class Extension extends Nette\DI\CompilerExtension
 		'lazy' => TRUE,
 		'autowired' => TRUE,
 		'debugger' => NULL,
+		'queryDumper' => NULL,
 		'explain' => FALSE,
 		'notices' => FALSE,
 		'longQueryTime' => NULL,
@@ -137,12 +139,33 @@ class Extension extends Nette\DI\CompilerExtension
 		}
 
 		if ($config['debugger'] === TRUE) {
-			$connection->addSetup(\sprintf('@%s::addPanel', Tracy\BlueScreen::class), [
-				PhPgSql\Tracy\Panel::class . '::renderException',
+			if (($config['queryDumper'] === NULL) || ($config['queryDumper'] === FALSE)) {
+				$queryDumper = $this->prefix(\sprintf('%s.queryDumper', $name));
+				if ($config['queryDumper'] === NULL) {
+					if (class_exists(Doctrine\SqlFormatter\SqlFormatter::class)) {
+						$queryDumperClass = PhPgSql\Tracy\QueryDumpers\SqlFormatter::class;
+					} else {
+						$queryDumperClass = PhPgSql\Tracy\QueryDumpers\Basic::class;
+					}
+				} else {
+					$queryDumperClass = PhPgSql\Tracy\QueryDumpers\NullDumper::class;
+				}
+
+				$builder->addDefinition($queryDumper)
+					->setFactory($queryDumperClass);
+
+				$queryDumper = '@' . $queryDumper;
+			} else {
+				$queryDumper = $config['queryDumper'];
+			}
+
+			$connection->addSetup(\sprintf('%s::initialize(?)', PhPgSql\Tracy\BluescreenPanel::class), [
+				$queryDumper,
 			]);
 			if ($this->debugMode) {
-				$connection->addSetup(\sprintf('%s::initializePanel(?, ?, ?, ?, ?, ?, ?)', PhPgSql\Tracy\Panel::class), [
+				$connection->addSetup(\sprintf('%s::initialize(?, ?, ?, ?, ?, ?, ?, ?)', PhPgSql\Tracy\BarPanel::class), [
 					'@self',
+					$queryDumper,
 					$name,
 					$config['explain'],
 					$config['notices'],
@@ -209,6 +232,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'lazy' => Schema\Expect::bool(TRUE),
 				'autowired' => Schema\Expect::bool(),
 				'debugger' => Schema\Expect::bool(\class_exists(Tracy\BlueScreen::class)),
+				'queryDumper' => Schema\Expect::mixed(), // null|false|string
 				'explain' => Schema\Expect::bool(FALSE),
 				'notices' => Schema\Expect::bool(FALSE),
 				'longQueryTime' => Schema\Expect::float(),
