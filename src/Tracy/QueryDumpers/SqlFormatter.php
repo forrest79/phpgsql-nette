@@ -10,7 +10,7 @@ class SqlFormatter extends Tracy\QueryDumper
 
 	public function format(string $sql): string
 	{
-		$formatted = (new Doctrine\SqlFormatter\SqlFormatter())->format($sql);
+		$formatted = (new Doctrine\SqlFormatter\SqlFormatter(new Doctrine\SqlFormatter\HtmlHighlighter()))->format($sql);
 		preg_match('#<pre style=".*?">(.*)<\/pre>$#s', $formatted, $matched);
 		return $matched[1];
 	}
