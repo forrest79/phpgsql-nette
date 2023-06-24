@@ -57,7 +57,7 @@ class BluescreenPanel
 
 	public static function initialize(PhPgSql\Tracy\QueryDumper $queryDumper): void
 	{
-		Tracy\Debugger::getBlueScreen()->addPanel(static function (\Throwable $e) use ($queryDumper): ?array {
+		Tracy\Debugger::getBlueScreen()->addPanel(static function (?\Throwable $e) use ($queryDumper): ?array {
 			return (new self($queryDumper))->renderException($e);
 		});
 	}
