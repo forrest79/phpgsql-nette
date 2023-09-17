@@ -39,7 +39,7 @@ use Tracy\Helpers;
 
 <h1>Queries: <?php echo $count, ($totalTime ? \sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', \htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
 
-<?php $requestPanelId = uniqid($name); ?>
+<?php $requestPanelId = \uniqid($name); ?>
 <?php if ($longQueryCount > 0 || $repeatingQueries !== [] || $nonParsedColumnsQueries !== []): ?>
 	<div class="phpgsql-panel-warnings">
 		<?php if ($longQueryCount > 0): ?>
@@ -54,7 +54,7 @@ use Tracy\Helpers;
 		<?php if ($repeatingQueries !== []): ?>
 			<span>
 				<a href="#phpgsql-panel-repeating-queries-<?php echo $requestPanelId; ?>">
-					<?php if (count($repeatingQueries) > 1): ?>
+					<?php if (\count($repeatingQueries) > 1): ?>
 						There are some repeating queries
 					<?php else: ?>
 						There is one repeating query
@@ -65,7 +65,7 @@ use Tracy\Helpers;
 		<?php if ($nonParsedColumnsQueries !== []): ?>
 			<span>
 				<a href="#phpgsql-panel-non-parsed-columns-queries-<?php echo $requestPanelId; ?>">
-					<?php if (count($nonParsedColumnsQueries) > 1): ?>
+					<?php if (\count($nonParsedColumnsQueries) > 1): ?>
 						There are some queries with non parsed columns
 					<?php else: ?>
 						There is one query with non parsed columns
@@ -140,7 +140,7 @@ use Tracy\Helpers;
 						</table>
 					<?php endif ?>
 					<?php if ($source !== NULL) {
-						echo substr_replace(Helpers::editorLink($source['file'], $source['line']), ' class="phpgsql-panel-source"', 2, 0);
+						echo \substr_replace(Helpers::editorLink($source['file'], $source['line']), ' class="phpgsql-panel-source"', 2, 0);
 					} ?>
 				</td>
 				<td>

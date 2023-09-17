@@ -1,0 +1,145 @@
+ignoreErrors:
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "create"
+		count: 1
+		path: src/Nette/Connection/ConnectionCreator.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Nette/Connection/FluentConnectionFactory.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Nette/DI/Extension.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.ForbiddenPublicProperty.ForbiddenPublicProperty
+		message: Do not use public properties. Use method access instead.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 2
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $count.
+		count: 2
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $hasLongQuery.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $hasNonParsedColumns.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $hasRepeatingQueries.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $longQueryCount.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $longQueryTime.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $name.
+		count: 2
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $nonParsedColumnsQueries.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $paramsDump.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $queries.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $queryDump.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $repeatingQueries.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $totalTime.
+		count: 2
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/BluescreenPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/Helper.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/QueryDumpers/Basic.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/QueryDumpers/NullDumper.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Tracy/QueryDumpers/SqlFormatter.php
+

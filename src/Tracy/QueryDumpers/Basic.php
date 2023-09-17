@@ -31,13 +31,13 @@ class Basic extends Tracy\QueryDumper
 			'#(/\\*.+?\\*/)|(?<=[\\s,(])(%s)(?=[\\s,)])|(?<=[\\s,(=])(%s)(?=[\\s,)=])|(%s)#is',
 			self::IMPORTANT_KEYWORDS,
 			self::OTHER_KEYWORDS,
-			self::VARIABLES
+			self::VARIABLES,
 		);
 
 		$sql = \htmlspecialchars($sql, ENT_COMPAT);
 
-		// intentionally (string), other can't be returned
-		$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
+		/** @phpstan-var string */
+		return \preg_replace_callback($highlighter, static function (array $m): string {
 			if (isset($m[1]) && ($m[1] !== '')) { // comment
 				return \sprintf('<em style="color:gray">%s</em>', $m[1]);
 			} elseif (isset($m[2]) && ($m[2] !== '')) { // important keywords
@@ -49,8 +49,6 @@ class Basic extends Tracy\QueryDumper
 			}
 			return \sprintf('<strong style="color:red">%s</strong>', $m[0]); // error
 		}, $sql);
-
-		return $sql;
 	}
 
 }

@@ -48,20 +48,20 @@ database:
         connect_timeout: 5 # good habit is to use connect_timeout parameter
     errorVerbosity: ::constant(PGSQL_ERRORS_VERBOSE) # default is NULL and it will use default error verbose PGSQL_ERRORS_DEFAULT, other value can be PGSQL_ERRORS_TERSE
     asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
-    defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL and default row factory is used
-    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL and default data type parser is used
+    defaultRowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL, and default row factory is used
+    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL, and default data type parser is used
     dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needed to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is NULL and cache is disabled
     forceNew: true # default is false
-    async: true # default is false, when true, connection is made in async way and it's not blocking next PHP code execution (before first query is run, library is waiting for active connection)
-    lazy: false # default is true, when false, connection is made right after Connection object is created, when true, connection is made with the first query
+    async: true # default is false, when true, connection is made in async way, and it's not blocking the next PHP code execution (before the first query is run, a library is waiting for active connection)
+    lazy: false # default is true, when false, connection is made right after the Connection object is created, when true, connection is made with the first query
     autowired: false # default is true (for second and next connection is always false)
-    debugger: false # default is true (when true, exception panel on Bluescreen is added and Tracy bar is shown in debug mode)
-    queryDumper: false # default is null (when false, no query dumper is used and all SQL queries are displayed as it is, when null - auto-detection is used - if Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
-    explain: true # default is false (when true, if Tracy panel is enabled, explain is shown for every query)
-    notices: true # default is false (when true, if Tracy panel is enabled, after every SQL command and before connection is closed notices are got and put into queries log)
-    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value are marked in panel with bold red time)
-    repeatingQueries: true # default is FALSE (when true, if Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
-    nonParsedColumns: true # default is FALSE (when true, if Tracy panel is enabled, queries with some non parsed (used) columns are detected and listed)
+    debugger: false # default is true (when true, the exception panel on Bluescreen is added, and Tracy bar is shown in debug mode)
+    queryDumper: false # default is null (when false, no query dumper is used, and all SQL queries are displayed as it is, when null - auto-detection is used - when Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
+    explain: true # default is false (when true, if the Tracy panel is enabled, explain is shown for every query)
+    notices: true # default is false (when true, if the Tracy panel is enabled, after every SQL command and before connection is closed, notices are got and put into the query log)
+    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value is marked in the panel with bold red time)
+    repeatingQueries: true # default is FALSE (when true, if the Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
+    nonParsedColumns: true # default is FALSE (when true, if the Tracy panel is enabled, queries with some non-parsed (used) columns are detected and listed)
 ```
 
 Or multiple connections:
@@ -88,7 +88,7 @@ database:
 
 First `connection` is autowired as `Forrest79\PhPgSql\Fluent\Connection`. If you want to autowired other connection or none connection, you must explicitly set `autowired: false`.
 
-You can also get connection by:
+You can also get a connection by:
 
 ```php
 $container->getService('database.default.connection'); // for one connection, default
@@ -96,7 +96,7 @@ $container->getService('database.default.connection'); // for one connection, de
 $container->getService('database.first.connection');
 ```
 
-Second can be get by:
+Second can be got by:
 
 ```php
 $container->getService('database.second.connection');
@@ -104,7 +104,7 @@ $container->getService('database.second.connection');
 
 ## Use your own connection class
 
-By default `Forrest79\PhPgSql\Fluent\Connection` is registered to DI as connection class. If you want to use other (your own) connection class, you need to use own connection factory. This is class that implements `Forrest79\PhPgSql\Nette\Connection\ConnectionCreator` interface and you must specify concrete return type with your connection class.
+By default `Forrest79\PhPgSql\Fluent\Connection` is registered to DI as connection class. If you want to use other (your own) connection class, you need to use own connection factory. This is class that implements `Forrest79\PhPgSql\Nette\Connection\ConnectionCreator` interface, and you must specify the concrete return type with your connection class.
 
 Example:
 
@@ -140,7 +140,7 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
 }
 ```
 
-Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from array with configuration. Items with `NULL` values are skipped.
+Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from the array with configuration. Items with `NULL` values are skipped.
 
 And now, you just need to override old connection factory with this one in DI configuration, `services` section, like this:
 
@@ -158,6 +158,6 @@ SQL queries are dumped in `Tracy\Bar` and in `Tracy\Bluescreen` and you can use 
 - `PhPgSql\Tracy\QueryDumpers\Basic` - highlight and format SQL query with basic internal formatter, it is used when `queryDumper: null` and `Doctrine\Sql-Formatter` is not installed
 - `PhPgSql\Tracy\QueryDumpers\SqlFormatter` - highlight and format SQL query with [Doctrine\Sql-Formatter](https://github.com/doctrine/sql-formatter), it is used when `queryDumper: null` and `Doctrine\Sql-Formatter` is installed
 
-> You can install better formatting via `Doctrine\Sql-Formatter` just for your dev environemnt with `composer require doctrine/sql-formatter --dev`.
+> You can install better formatting via `Doctrine\Sql-Formatter` just for your dev environment with `composer require doctrine/sql-formatter --dev`.
 
-Or you can use your own query dumper, just create a class extending abstract class `PhPgSql\Tracy\QueryDumper`, register it to the DI container and set service to `queryDumper: @class/serviceName`
+Or you can use your own query dumper, just create a class-extending abstract class `PhPgSql\Tracy\QueryDumper`, register it to the DI container and set service to `queryDumper: @class/serviceName`

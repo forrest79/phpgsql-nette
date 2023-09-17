@@ -19,7 +19,7 @@ abstract class QueryDumper
 			$sql = \preg_replace_callback(
 				'/\$(\d+)/',
 				static function ($matches) use (&$parameters): string {
-					$i = intval($matches[1]) - 1;
+					$i = \intval($matches[1]) - 1;
 
 					if (\array_key_exists($i, $parameters)) {
 						/** @phpstan-var scalar|NULL $value */
@@ -30,7 +30,7 @@ abstract class QueryDumper
 
 					return $matches[0];
 				},
-				$sql
+				$sql,
 			);
 			\assert(\is_string($sql));
 		}

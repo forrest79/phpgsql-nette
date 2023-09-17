@@ -10,86 +10,23 @@ use Tracy;
 
 class Extension extends Nette\DI\CompilerExtension
 {
-	/** @var array<string, mixed> */
-	private $defaults = [
-		'config' => [],
-		'forceNew' => FALSE,
-		'async' => FALSE,
-		'errorVerbosity' => NULL,
-		'asyncWaitSeconds' => NULL,
-		'defaultRowFactory' => NULL,
-		'dataTypeParser' => NULL,
-		'dataTypeCache' => NULL,
-		'lazy' => TRUE,
-		'autowired' => TRUE,
-		'debugger' => NULL,
-		'queryDumper' => NULL,
-		'explain' => FALSE,
-		'notices' => FALSE,
-		'longQueryTime' => NULL,
-		'repeatingQueries' => FALSE,
-		'nonParsedColumns' => FALSE,
-	];
+	private bool $debugMode;
 
-	/** @var bool */
-	private $debugMode;
-
-	/** @var array<string> */
-	private $names = [];
+	/** @var list<string> */
+	private array $names = [];
 
 
 	public function __construct(bool $debugMode)
 	{
 		$this->debugMode = $debugMode;
-		$this->defaults['debugger'] = \class_exists(Tracy\BlueScreen::class);
 	}
 
 
 	public function loadConfiguration(): void
 	{
-		$configs = (array) $this->getConfig();
-		if (\method_exists(Nette\DI\CompilerExtension::class, 'getConfigSchema')) {
-			$this->loadConfiguration30($configs);
-		} else {
-			$this->loadConfiguration24($configs);
-		}
-	}
-
-
-	/**
-	 * @param array<string, mixed> $configs
-	 */
-	private function loadConfiguration24(array $configs): void
-	{
-		foreach ($configs as $values) {
-			if (\is_scalar($values)) {
-				$configs = ['default' => $configs];
-				break;
-			}
-		}
-
-		$defaults = $this->defaults;
-		foreach ($configs as $name => $config) {
-			if (!\is_array($config)) {
-				continue;
-			}
-			$config = $this->validateConfig($defaults, $config, $this->prefix($name));
-			$defaults['autowired'] = FALSE;
-			$this->setupDatabase($config, $name);
-
-			$this->names[] = $name;
-		}
-	}
-
-
-	/**
-	 * @param array<string, \stdClass> $configs @todo \stdClass after Nette 2.4 will be dropped
-	 */
-	private function loadConfiguration30(array $configs): void
-	{
 		$autowired = TRUE;
-		foreach ($configs as $name => $config) {
-			$config->autowired = $config->autowired ?? $autowired;
+		foreach ((array) $this->getConfig() as $name => $config) {
+			$config->autowired ??= $autowired;
 			$autowired = FALSE;
 			$this->setupDatabase((array) $config, $name);
 			$this->names[] = $name;
@@ -193,7 +130,7 @@ class Extension extends Nette\DI\CompilerExtension
 				throw new \InvalidArgumentException(\sprintf(
 					'Connection factory \'%s\' must implement \'%s\' interface',
 					$connectionFactory,
-					PhPgSql\Nette\Connection\ConnectionCreator::class
+					PhPgSql\Nette\Connection\ConnectionCreator::class,
 				));
 			}
 
@@ -206,7 +143,7 @@ class Extension extends Nette\DI\CompilerExtension
 					'Connection factory \'%s\' must return connection that extends \'%s\' in create() method, \'%s\' is returning',
 					$connectionFactory,
 					PhPgSql\Db\Connection::class,
-					$connectionType
+					$connectionType,
 				));
 			}
 
@@ -238,7 +175,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'longQueryTime' => Schema\Expect::float(),
 				'repeatingQueries' => Schema\Expect::bool(FALSE),
 				'nonParsedColumns' => Schema\Expect::bool(FALSE),
-			])
+			]),
 		)->before(static function ($config) {
 			foreach ($config as $name => $values) {
 				if (\is_scalar($values) || (\is_array($values) && $name === 'config')) {

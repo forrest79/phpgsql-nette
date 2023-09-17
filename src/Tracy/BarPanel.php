@@ -7,50 +7,40 @@ use Tracy;
 
 class BarPanel implements Tracy\IBarPanel
 {
-	/** @var bool */
-	public static $disabled = FALSE;
+	public static bool $disabled = FALSE;
 
-	/** @var PhPgSql\Db\Connection */
-	private $connection;
+	private PhPgSql\Db\Connection $connection;
 
-	/** @var PhPgSql\Tracy\QueryDumper */
-	private $queryDumper;
+	private PhPgSql\Tracy\QueryDumper $queryDumper;
 
-	/** @var string */
-	private $name;
+	private string $name;
 
-	/** @var float|NULL in seconds */
-	private $longQueryTime;
+	private float|NULL $longQueryTimeSeconds;
 
-	/** @var bool */
-	private $detectRepeatingQueries;
+	private bool $detectRepeatingQueries;
 
-	/** @var float in seconds */
-	private $totalTime = 0;
+	private float $totalTimeSeconds = 0;
 
-	/** @var int */
-	private $count = 0;
+	private int $count = 0;
 
 	/** @var array<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL, 3: array{file: string, line: int|NULL}|NULL}> */
-	private $queries = [];
+	private array $queries = [];
 
-	/** @var int */
-	private $longQueryCount = 0;
+	private int $longQueryCount = 0;
 
 	/** @var array<string, int> */
-	private $queriesCount = [];
+	private array $queriesCount = [];
 
 	/** @var array<string, int>|NULL */
-	private $repeatingQueries = NULL;
+	private array|NULL $repeatingQueries = NULL;
 
-	/** @var array<PhPgSql\Db\Result> */
-	private $results = [];
+	/** @var list<PhPgSql\Db\Result> */
+	private array $results = [];
 
 	/** @var array<array{0: PhPgSql\Db\Query, 1: array<string>}>|NULL */
-	private $nonParsedColumnsQueries = NULL;
+	private array|NULL $nonParsedColumnsQueries = NULL;
 
-	/** @var bool */
-	private $disableLogQuery = FALSE;
+	private bool $disableLogQuery = FALSE;
 
 
 	private function __construct(
@@ -59,12 +49,12 @@ class BarPanel implements Tracy\IBarPanel
 		string $name,
 		bool $explain = FALSE,
 		bool $notices = FALSE,
-		?float $longQueryTime = NULL,
+		float|NULL $longQueryTime = NULL,
 		bool $detectRepeatingQueries = FALSE,
-		bool $detectNonParsedColumns = FALSE
+		bool $detectNonParsedColumns = FALSE,
 	)
 	{
-		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, ?float $time = NULL) use ($explain): void {
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, float|NULL $time = NULL) use ($explain): void {
 			$this->logQuery($query, $time, $explain);
 		});
 
@@ -86,12 +76,12 @@ class BarPanel implements Tracy\IBarPanel
 		$this->connection = $connection;
 		$this->queryDumper = $queryDumper;
 		$this->name = $name;
-		$this->longQueryTime = $longQueryTime;
+		$this->longQueryTimeSeconds = $longQueryTime;
 		$this->detectRepeatingQueries = $detectRepeatingQueries;
 	}
 
 
-	public function logQuery(PhPgSql\Db\Query $query, ?float $time, bool $explain): void
+	public function logQuery(PhPgSql\Db\Query $query, float|NULL $time, bool $explain): void
 	{
 		if (self::$disabled || $this->disableLogQuery) {
 			return;
@@ -100,30 +90,30 @@ class BarPanel implements Tracy\IBarPanel
 		$this->count++;
 
 		if ($time !== NULL) {
-			$this->totalTime += $time;
+			$this->totalTimeSeconds += $time;
 		}
 
-		if (($this->longQueryTime !== NULL) && ($time >= $this->longQueryTime)) {
+		if (($this->longQueryTimeSeconds !== NULL) && ($time >= $this->longQueryTimeSeconds)) {
 			$this->longQueryCount++;
 		}
 
-		if ($this->detectRepeatingQueries && !(bool) \preg_match('#^\s*(BEGIN|COMMIT|ROLLBACK|SET)#i', $query->getSql())) {
+		if ($this->detectRepeatingQueries && (\preg_match('#^\s*(BEGIN|COMMIT|ROLLBACK|SET)#i', $query->getSql()) === 0)) {
 			$this->queriesCount[$query->getSql()] = ($this->queriesCount[$query->getSql()] ?? 0) + 1;
 		}
 
 		$source = NULL;
-		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		$trace = \debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 		foreach ($trace as $row) {
 			if (
 				($row['class'] ?? '') !== self::class
-				&& !is_a($row['class'] ?? '', PhPgSql\Db\Events::class, TRUE)
-				&& !(is_a($row['class'] ?? '', PhPgSql\Db\Connection::class, TRUE) && in_array($row['function'], ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
-				&& !(is_a($row['class'] ?? '', PhPgSql\Fluent\QueryExecute::class, TRUE) && in_array($row['function'], ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
+				&& !\is_a($row['class'] ?? '', PhPgSql\Db\Events::class, TRUE)
+				&& !(\is_a($row['class'] ?? '', PhPgSql\Db\Connection::class, TRUE) && \in_array($row['function'], ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
+				&& !(\is_a($row['class'] ?? '', PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($row['function'], ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
 			) {
 				break;
 			}
 
-			if (isset($row['file']) && is_file($row['file'])) {
+			if (isset($row['file']) && \is_file($row['file'])) {
 				$source = [
 					'file' => $row['file'],
 					'line' => $row['line'] ?? NULL,
@@ -149,7 +139,7 @@ class BarPanel implements Tracy\IBarPanel
 					'<pre class="dump"><strong style="color:gray">%s</strong></pre>',
 					\implode('<br><br>', \array_map(static function ($notice): string {
 						return '<em>Notice:</em><br>' . \substr($notice, 9);
-					}, \array_map('nl2br', $notices)))
+					}, \array_map('nl2br', $notices))),
 				),
 				FALSE,
 				NULL,
@@ -160,13 +150,13 @@ class BarPanel implements Tracy\IBarPanel
 
 
 	/**
-	 * @return array<PhPgSql\Db\Row>|NULL
+	 * @return list<PhPgSql\Db\Row>|NULL
 	 */
-	private function explain(PhPgSql\Db\Query $query): ?array
+	private function explain(PhPgSql\Db\Query $query): array|NULL
 	{
 		$sql = $query->getSql();
 
-		if (!(bool) \preg_match('#\s*\(?\s*SELECT\s#iA', $sql)) {
+		if (\preg_match('#\s*\(?\s*SELECT\s#iA', $sql) === 0) {
 			return NULL;
 		}
 
@@ -175,7 +165,7 @@ class BarPanel implements Tracy\IBarPanel
 		try {
 			$this->disableLogQuery = TRUE;
 			$explain = $this->connection->query($explainQuery)->fetchAll();
-		} catch (PhPgSql\Db\Exceptions\QueryException $e) {
+		} catch (PhPgSql\Db\Exceptions\QueryException) {
 			$explain = NULL;
 		} finally {
 			$this->disableLogQuery = FALSE;
@@ -189,7 +179,7 @@ class BarPanel implements Tracy\IBarPanel
 	{
 		$name = $this->name;
 		$count = $this->count;
-		$totalTime = $this->totalTime;
+		$totalTime = $this->totalTimeSeconds;
 
 		$hasLongQuery = $this->longQueryCount > 0;
 		$hasRepeatingQueries = \count($this->getRepeatingQueries()) > 0;
@@ -214,10 +204,10 @@ class BarPanel implements Tracy\IBarPanel
 
 		$name = $this->name;
 		$count = $this->count;
-		$totalTime = $this->totalTime;
+		$totalTime = $this->totalTimeSeconds;
 		$queries = $this->queries;
 
-		$longQueryTime = $this->longQueryTime;
+		$longQueryTime = $this->longQueryTimeSeconds;
 
 		$longQueryCount = $this->longQueryCount;
 		$repeatingQueries = $this->getRepeatingQueries();
@@ -259,7 +249,7 @@ class BarPanel implements Tracy\IBarPanel
 
 
 	/**
-	 * @return array<array<mixed>>
+	 * @return list<array<mixed>>
 	 */
 	private function getNonParsedColumnsQueries(): array
 	{
@@ -288,9 +278,9 @@ class BarPanel implements Tracy\IBarPanel
 		string $name,
 		bool $explain,
 		bool $notices,
-		?float $longQueryTime = NULL,
+		float|NULL $longQueryTime = NULL,
 		bool $detectRepeatingQueries = FALSE,
-		bool $detectNonParsedColumns = FALSE
+		bool $detectNonParsedColumns = FALSE,
 	): self
 	{
 		$panel = new self($connection, $queryDumper, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);

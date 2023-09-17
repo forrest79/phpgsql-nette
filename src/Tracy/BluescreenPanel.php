@@ -7,8 +7,7 @@ use Tracy;
 
 class BluescreenPanel
 {
-	/** @var PhPgSql\Tracy\QueryDumper */
-	private $queryDumper;
+	private PhPgSql\Tracy\QueryDumper $queryDumper;
 
 
 	private function __construct(PhPgSql\Tracy\QueryDumper $queryDumper)
@@ -20,7 +19,7 @@ class BluescreenPanel
 	/**
 	 * @return array{tab: string, panel: string}|NULL
 	 */
-	public function renderException(?\Throwable $e): ?array
+	public function renderException(\Throwable|NULL $e): array|NULL
 	{
 		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
 			return NULL;
@@ -57,7 +56,7 @@ class BluescreenPanel
 
 	public static function initialize(PhPgSql\Tracy\QueryDumper $queryDumper): void
 	{
-		Tracy\Debugger::getBlueScreen()->addPanel(static function (?\Throwable $e) use ($queryDumper): ?array {
+		Tracy\Debugger::getBlueScreen()->addPanel(static function (\Throwable|NULL $e) use ($queryDumper): array|NULL {
 			return (new self($queryDumper))->renderException($e);
 		});
 	}

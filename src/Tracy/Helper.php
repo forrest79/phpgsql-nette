@@ -8,7 +8,7 @@ class Helper
 {
 
 	/**
-	 * @param array<mixed> $parameters
+	 * @param list<mixed> $parameters
 	 */
 	public static function dumpParameters(array $parameters): string
 	{
@@ -18,13 +18,13 @@ class Helper
 				Tracy\Dumper::LAZY => FALSE,
 				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
 				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
-			]
+			],
 		);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @return array<string, mixed>
 	 */
 	private static function prepareParameters(array $params): array

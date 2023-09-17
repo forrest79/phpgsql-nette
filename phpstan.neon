@@ -7,14 +7,8 @@ parameters:
 		# === Dynamic container method ===
 		- '#Call to an undefined method Nette\\DI\\Container::initialize\(\)\.#'
 
-		# === This is OK for PHP >= 7.1 ===
+		# === This is OK for PHP >= 8.0 ===
 		-
 			message: '#Call to an undefined method ReflectionType::getName\(\)\.#'
-			path: %rootDir%/../../../src/Nette/DI/Extension.php
-			count: 1
-
-		# === This is because of Nette DI 2.4/3.0 compatibility ===
-		-
-			message: "#Call to function method_exists\\(\\) with 'Nette\\\\\\\\DI\\\\\\\\CompilerExtension' and 'getConfigSchema' will always evaluate to true\\.#"
 			path: %rootDir%/../../../src/Nette/DI/Extension.php
 			count: 1
