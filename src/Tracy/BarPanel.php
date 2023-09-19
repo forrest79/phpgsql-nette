@@ -102,7 +102,7 @@ class BarPanel implements Tracy\IBarPanel
 		}
 
 		$source = NULL;
-		$trace = \debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		$trace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
 		foreach ($trace as $row) {
 			if (
 				($row['class'] ?? '') !== self::class

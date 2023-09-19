@@ -46,7 +46,7 @@ class Extension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($connectionFactory)
 			->setFactory(PhPgSql\Nette\Connection\FluentConnectionFactory::class);
 
-		assert(is_bool($config['autowired']));
+		\assert(\is_bool($config['autowired']));
 		$connection = $builder->addDefinition($this->prefix(\sprintf('%s.connection', $name)))
 			->setFactory('@' . $connectionFactory . '::create', [
 				(array) $config['config'],

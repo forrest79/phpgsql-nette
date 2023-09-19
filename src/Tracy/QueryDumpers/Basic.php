@@ -34,7 +34,7 @@ class Basic extends Tracy\QueryDumper
 			self::VARIABLES,
 		);
 
-		$sql = \htmlspecialchars($sql, ENT_COMPAT);
+		$sql = \htmlspecialchars($sql, \ENT_COMPAT);
 
 		/** @phpstan-var string */
 		return \preg_replace_callback($highlighter, static function (array $m): string {
