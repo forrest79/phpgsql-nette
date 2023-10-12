@@ -7,12 +7,12 @@ use Nette\DI;
 use Tester;
 use Tracy;
 
-require_once __DIR__ . '/TestCase.php';
+require_once __DIR__ . '/bootstrap.php';
 
 /**
  * @testCase
  */
-final class BasicTest extends TestCase
+final class BasicTest extends Tester\TestCase
 {
 
 	public function testBasic(): void

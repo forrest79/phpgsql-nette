@@ -9,6 +9,4 @@ if (!\file_exists($loader)) {
 
 require $loader;
 
-if (!\defined('__PHPSTAN_RUNNING__')) {
-	Tester\Environment::setup();
-}
+Tester\Environment::setup();
