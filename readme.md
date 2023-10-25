@@ -3,10 +3,10 @@
 [![Latest Stable Version](https://poser.pugx.org/forrest79/phpgsql-nette/v)](//packagist.org/packages/forrest79/phpgsql-nette)
 [![Monthly Downloads](https://poser.pugx.org/forrest79/phpgsql-nette/d/monthly)](//packagist.org/packages/forrest79/phpgsql-nette)
 [![License](https://poser.pugx.org/forrest79/phpgsql-nette/license)](//packagist.org/packages/forrest79/phpgsql-nette)
-[![Build](https://github.com/forrest79/PhPgSql-Nette/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/PhPgSql-Nette/actions/workflows/build.yml)
+[![Build](https://github.com/forrest79/phpgsql-nette/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/phpgsql-nette/actions/workflows/build.yml)
 
 * [Nette](https://nette.org)
-* [PhPgSql](https://github.com/forrest79/PhPgSql)
+* [PhPgSql](https://github.com/forrest79/phpgsql)
 
 Use PhPgSql with Nette Framework.
 
