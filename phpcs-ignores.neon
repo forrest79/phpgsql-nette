@@ -36,6 +36,18 @@ ignoreErrors:
 		path: src/Tracy/BarPanel.php
 
 	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $class.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $function.
+		count: 1
+		path: src/Tracy/BarPanel.php
+
+	-
 		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
 		message: Unused variable $count.
 		count: 2

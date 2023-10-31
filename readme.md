@@ -161,3 +161,22 @@ SQL queries are dumped in `Tracy\Bar` and in `Tracy\Bluescreen` and you can use 
 > You can install better formatting via `Doctrine\Sql-Formatter` just for your dev environment with `composer require doctrine/sql-formatter --dev`.
 
 Or you can use your own query dumper, just create a class-extending abstract class `PhPgSql\Tracy\QueryDumper`, register it to the DI container and set service to `queryDumper: @class/serviceName`
+
+## Tracy BarPanel
+
+`BarPanel` for `Tracy` with DB queries is showing links to PHP source files, where the query was sent to the database. This is made using PHP function `debug_backtrace()`.
+This function returns the whole call stack. To get the correct place in the PHP source file, we must ignore some internal library classes where the query is sent to the database in real.
+Basically, `BarPanel` ignores all classes/function from PhPgSql library to show the most accurate place in the PHP source.
+
+When you use some own custom wrapping objects, you want to ignore in the call stack, you can extend `backtraceContinueIterate()` method and add your own logic here. For example:
+
+```php
+
+protected static function backtraceContinueIterate(string $class, string $function): bool
+{
+    return parent::backtraceContinueIterate() // just for sure, you can use multiple extends...
+        || (is_a($class, MyOwnFluentQuery::class, TRUE) && ($function === 'count'))
+        || (is_a($class, Mapper\Record::class, TRUE) && ($function === 'fetch'));
+}
+
+```

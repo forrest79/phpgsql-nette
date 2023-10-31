@@ -104,11 +104,14 @@ class BarPanel implements Tracy\IBarPanel
 		$source = NULL;
 		$trace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
 		foreach ($trace as $row) {
+			$class = $row['class'] ?? '';
+			$function = $row['function'];
 			if (
-				($row['class'] ?? '') !== self::class
-				&& !\is_a($row['class'] ?? '', PhPgSql\Db\Events::class, TRUE)
-				&& !(\is_a($row['class'] ?? '', PhPgSql\Db\Connection::class, TRUE) && \in_array($row['function'], ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
-				&& !(\is_a($row['class'] ?? '', PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($row['function'], ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
+				($class !== self::class)
+				&& !\is_a($class, PhPgSql\Db\Events::class, TRUE)
+				&& !(\is_a($class, PhPgSql\Db\Connection::class, TRUE) && \in_array($function, ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
+				&& !(\is_a($class, PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($function, ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
+				&& !static::backtraceContinueIterate($class, $function)
 			) {
 				break;
 			}
@@ -122,6 +125,15 @@ class BarPanel implements Tracy\IBarPanel
 		}
 
 		$this->queries[] = [$query, $time, $explain ? self::explain($query) : NULL, $source];
+	}
+
+
+	/**
+	 * Can be over-written with custom logic to ignore concrete class and function in backtrace to show the most appropriate file/line in source code.
+	 */
+	protected static function backtraceContinueIterate(string $class, string $function): bool
+	{
+		return FALSE;
 	}
 
 
