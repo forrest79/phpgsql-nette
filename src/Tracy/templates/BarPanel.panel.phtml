@@ -10,12 +10,12 @@ use Tracy\Helpers;
 	#tracy-debug div.phpgsql-panel h2 { font-size: 20px; margin: 10px 0 0; }
 	#tracy-debug td.phpgsql-panel-center { text-align: center; }
 	#tracy-debug td.phpgsql-panel-sql { background: white !important; }
-	#tracy-debug a.phpgsql-panel-source { color: #bbb !important }
+	#tracy-debug a.tracy-editor { color: #bbb !important; font-size: 11px; }
 	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre; }
 	#tracy-debug .phpgsql-panel-binded th { position: relative; }
-	#tracy-debug .phpgsql-panel-binded a { display: inline-block; width: 16px; height: 16px; vertical-align: bottom; }
+	#tracy-debug .phpgsql-panel-binded a { position: absolute; display: block; right: 2px; top: 2px; }
 	#tracy-debug .phpgsql-panel-binded a:focus { background: none; }
-	#tracy-debug .phpgsql-panel-binded a svg { width: 14px; height: 14px; padding: 2px; }
+	#tracy-debug .phpgsql-panel-binded a svg { width: 14px; height: 14px; padding: 2px 2px 0 2px; }
 	#tracy-debug .phpgsql-panel-explain td { font-size: 11px; }
 	#tracy-debug .phpgsql-panel-warning { color: #f33; }
 	#tracy-debug div.phpgsql-panel-warnings { font-size: 11px; margin: 5px 0 10px; }
@@ -140,7 +140,7 @@ use Tracy\Helpers;
 						</table>
 					<?php endif ?>
 					<?php if ($source !== NULL) {
-						echo \substr_replace(Helpers::editorLink($source['file'], $source['line']), ' class="phpgsql-panel-source"', 2, 0);
+						echo Helpers::editorLink($source['file'], $source['line']);
 					} ?>
 				</td>
 				<td>
