@@ -96,11 +96,16 @@ class Extension extends Nette\DI\CompilerExtension
 				$queryDumper = $config['queryDumper'];
 			}
 
-			$connection->addSetup(\sprintf('%s::initialize(?)', PhPgSql\Tracy\BluescreenPanel::class), [
+			\assert(\is_string($config['tracyBluescreenPanelClass']));
+
+			$connection->addSetup(\sprintf('%s::initialize(?)', $config['tracyBluescreenPanelClass']), [
 				$queryDumper,
 			]);
+
 			if ($this->debugMode) {
-				$connection->addSetup(\sprintf('%s::initialize(?, ?, ?, ?, ?, ?, ?, ?)', PhPgSql\Tracy\BarPanel::class), [
+				\assert(\is_string($config['tracyBarPanelClass']));
+
+				$connection->addSetup(\sprintf('%s::initialize(?, ?, ?, ?, ?, ?, ?, ?)', $config['tracyBarPanelClass']), [
 					'@self',
 					$queryDumper,
 					$name,
@@ -169,6 +174,8 @@ class Extension extends Nette\DI\CompilerExtension
 				'lazy' => Schema\Expect::bool(TRUE),
 				'autowired' => Schema\Expect::bool(),
 				'debugger' => Schema\Expect::bool(\class_exists(Tracy\BlueScreen::class)),
+				'tracyBluescreenPanelClass' => Schema\Expect::string(PhPgSql\Tracy\BluescreenPanel::class),
+				'tracyBarPanelClass' => Schema\Expect::string(PhPgSql\Tracy\BarPanel::class),
 				'queryDumper' => Schema\Expect::mixed(), // null|false|string
 				'explain' => Schema\Expect::bool(FALSE),
 				'notices' => Schema\Expect::bool(FALSE),

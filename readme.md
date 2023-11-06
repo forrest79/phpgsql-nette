@@ -56,6 +56,8 @@ database:
     lazy: false # default is true, when false, connection is made right after the Connection object is created, when true, connection is made with the first query
     autowired: false # default is true (for second and next connection is always false)
     debugger: false # default is true (when true, the exception panel on Bluescreen is added, and Tracy bar is shown in debug mode)
+    tracyBluescreenPanelClass: App\PhPgSql\MyOwnTracy\BarPanel # default is Forrest79\PhPgSql\Tracy\BluescreenPanel (you can use your own Tracy bluescreen panel class)
+    tracyBarPanelClass: App\PhPgSql\MyOwnTracy\BarPanel # default is Forrest79\PhPgSql\Tracy\BarPanel (you can use your own Tracy bar panel class)
     queryDumper: false # default is null (when false, no query dumper is used, and all SQL queries are displayed as it is, when null - auto-detection is used - when Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
     explain: true # default is false (when true, if the Tracy panel is enabled, explain is shown for every query)
     notices: true # default is false (when true, if the Tracy panel is enabled, after every SQL command and before connection is closed, notices are got and put into the query log)
