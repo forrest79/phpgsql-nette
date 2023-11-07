@@ -43,7 +43,7 @@ class BarPanel implements Tracy\IBarPanel
 	private bool $disableLogQuery = FALSE;
 
 
-	private function __construct(
+	final public function __construct(
 		PhPgSql\Db\Connection $connection,
 		PhPgSql\Tracy\QueryDumper $queryDumper,
 		string $name,
@@ -295,7 +295,7 @@ class BarPanel implements Tracy\IBarPanel
 		bool $detectNonParsedColumns = FALSE,
 	): self
 	{
-		$panel = new self($connection, $queryDumper, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
+		$panel = new static($connection, $queryDumper, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}
