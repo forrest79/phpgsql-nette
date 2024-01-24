@@ -111,7 +111,7 @@ class Extension extends Nette\DI\CompilerExtension
 					$name,
 					$config['explain'],
 					$config['notices'],
-					$config['longQueryTime'],
+					$config['longQueryTimeMs'],
 					$config['repeatingQueries'],
 					$config['nonParsedColumns'],
 				]);
@@ -179,7 +179,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'queryDumper' => Schema\Expect::mixed(), // null|false|string
 				'explain' => Schema\Expect::bool(FALSE),
 				'notices' => Schema\Expect::bool(FALSE),
-				'longQueryTime' => Schema\Expect::float(),
+				'longQueryTimeMs' => Schema\Expect::float(),
 				'repeatingQueries' => Schema\Expect::bool(FALSE),
 				'nonParsedColumns' => Schema\Expect::bool(FALSE),
 			]),
@@ -190,6 +190,7 @@ class Extension extends Nette\DI\CompilerExtension
 					break;
 				}
 			}
+
 			return $config;
 		});
 	}

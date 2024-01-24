@@ -85,18 +85,18 @@ use Tracy\Helpers;
 		</tr>
 		<?php
 			foreach ($queries as $query):
-				[$sql, $time, $explain, $source] = $query;
+				[$sql, $timeMs, $explain, $source] = $query;
 
 				$hasParams = ($sql instanceof PhPgSql\Db\Query) && ($sql->getParams() !== []);
 		?>
 			<tr>
 				<td>
 					<?php
-						if ($time === FALSE) {
+						if ($timeMs === FALSE) {
 							echo '-';
-						} else if ($time !== NULL) {
-							$formattedTime = \sprintf('%0.3f', $time * 1000);
-							if (($longQueryTime !== NULL) && ($time >= $longQueryTime)) {
+						} else if ($timeMs !== NULL) {
+							$formattedTime = \sprintf('%0.3f', $timeMs);
+							if (($longQueryTimeMs !== NULL) && ($timeMs >= $longQueryTimeMs)) {
 								echo \sprintf('<strong %sclass="phpgsql-panel-warning">%s</strong>', $longQueryCount === 1 ? 'id="phpgsql-panel-long-run-query-' . $requestPanelId . '" ' : '', $formattedTime);
 							} else {
 								echo $formattedTime;

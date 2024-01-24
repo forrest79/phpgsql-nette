@@ -61,7 +61,7 @@ database:
     queryDumper: false # default is null (when false, no query dumper is used, and all SQL queries are displayed as it is, when null - auto-detection is used - when Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
     explain: true # default is false (when true, if the Tracy panel is enabled, explain is shown for every query)
     notices: true # default is false (when true, if the Tracy panel is enabled, after every SQL command and before connection is closed, notices are got and put into the query log)
-    longQueryTime: 0.1 # default is NULL = disabled, is set (float, time in second) and Tracy panel is enabled, all queries that takes longer than this value is marked in the panel with bold red time)
+    longQueryTimeMs: 100 # default is NULL = disabled, is set (float, time in milliseconds) and Tracy panel is enabled, all queries that takes longer than this value is marked in the panel with bold red time)
     repeatingQueries: true # default is FALSE (when true, if the Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
     nonParsedColumns: true # default is FALSE (when true, if the Tracy panel is enabled, queries with some non-parsed (used) columns are detected and listed)
 ```

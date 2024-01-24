@@ -18,13 +18,16 @@ class Basic extends Tracy\QueryDumper
 	{
 		// insert new lines
 		$sql = ' ' . $sql . ' ';
-		$sql = (string) \preg_replace(\sprintf('#(?<=[\\s,(])(%s)(?=[\\s,)])#i', self::IMPORTANT_KEYWORDS), "\n\$1", $sql); // intentionally (string), other can't be returned
+		$sql = \preg_replace(\sprintf('#(?<=[\\s,(])(%s)(?=[\\s,)])#i', self::IMPORTANT_KEYWORDS), "\n\$1", $sql);
+		\assert(\is_string($sql));
 
 		// reduce spaces
-		$sql = (string) \preg_replace('#[ \t]{2,}#', ' ', $sql); // intentionally (string), other can't be returned
+		$sql = \preg_replace('#[ \t]{2,}#', ' ', $sql);
+		\assert(\is_string($sql));
 
 		$sql = \wordwrap($sql, 100);
-		$sql = (string) \preg_replace("#([ \t]*\r?\n){2,}#", "\n", $sql); // intentionally (string), other can't be returned
+		$sql = \preg_replace("#([ \t]*\r?\n){2,}#", "\n", $sql);
+		\assert(\is_string($sql));
 
 		// syntax highlight
 		$highlighter = \sprintf(
@@ -47,6 +50,7 @@ class Basic extends Tracy\QueryDumper
 			} elseif (isset($m[4]) && ($m[4] !== '')) { // variables
 				return \sprintf('<strong style="color:brown">%s</strong>', $m[4]);
 			}
+
 			return \sprintf('<strong style="color:red">%s</strong>', $m[0]); // error
 		}, $sql);
 	}

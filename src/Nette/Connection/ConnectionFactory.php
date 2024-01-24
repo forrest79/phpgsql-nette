@@ -16,6 +16,7 @@ abstract class ConnectionFactory implements ConnectionCreator
 				$configItems[] = $key . '=\'' . $value . '\'';
 			}
 		}
+
 		return \implode(' ', $configItems);
 	}
 

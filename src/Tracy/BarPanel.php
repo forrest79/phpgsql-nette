@@ -15,7 +15,7 @@ class BarPanel implements Tracy\IBarPanel
 
 	private string $name;
 
-	private float|NULL $longQueryTimeSeconds;
+	private float|NULL $longQueryTimeMs;
 
 	private bool $detectRepeatingQueries;
 
@@ -23,7 +23,7 @@ class BarPanel implements Tracy\IBarPanel
 
 	private int $count = 0;
 
-	/** @var array<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL, 3: array{file: string, line: int|NULL}|NULL}> */
+	/** @var list<array{0: PhPgSql\Db\Query|string, 1: float|FALSE|NULL, 2: array<PhPgSql\Db\Row>|NULL, 3: array{file: string, line: int|NULL}|NULL}> */
 	private array $queries = [];
 
 	private int $longQueryCount = 0;
@@ -37,7 +37,7 @@ class BarPanel implements Tracy\IBarPanel
 	/** @var list<PhPgSql\Db\Result> */
 	private array $results = [];
 
-	/** @var array<array{0: PhPgSql\Db\Query, 1: array<string>}>|NULL */
+	/** @var list<array{0: PhPgSql\Db\Query, 1: list<string>}>|NULL */
 	private array|NULL $nonParsedColumnsQueries = NULL;
 
 	private bool $disableLogQuery = FALSE;
@@ -49,13 +49,13 @@ class BarPanel implements Tracy\IBarPanel
 		string $name,
 		bool $explain = FALSE,
 		bool $notices = FALSE,
-		float|NULL $longQueryTime = NULL,
+		float|NULL $longQueryTimeMs = NULL,
 		bool $detectRepeatingQueries = FALSE,
 		bool $detectNonParsedColumns = FALSE,
 	)
 	{
-		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, float|NULL $time = NULL) use ($explain): void {
-			$this->logQuery($query, $time, $explain);
+		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, float|NULL $timeNs = NULL) use ($explain): void {
+			$this->logQuery($query, $timeNs, $explain);
 		});
 
 		if ($notices) {
@@ -76,12 +76,12 @@ class BarPanel implements Tracy\IBarPanel
 		$this->connection = $connection;
 		$this->queryDumper = $queryDumper;
 		$this->name = $name;
-		$this->longQueryTimeSeconds = $longQueryTime;
+		$this->longQueryTimeMs = $longQueryTimeMs;
 		$this->detectRepeatingQueries = $detectRepeatingQueries;
 	}
 
 
-	public function logQuery(PhPgSql\Db\Query $query, float|NULL $time, bool $explain): void
+	public function logQuery(PhPgSql\Db\Query $query, float|NULL $timeNs, bool $explain): void
 	{
 		if (self::$disabled || $this->disableLogQuery) {
 			return;
@@ -89,11 +89,13 @@ class BarPanel implements Tracy\IBarPanel
 
 		$this->count++;
 
-		if ($time !== NULL) {
-			$this->totalTimeSeconds += $time;
+		$timeMs = NULL;
+		if ($timeNs !== NULL) {
+			$timeMs = $timeNs / 1000000;
+			$this->totalTimeSeconds += $timeMs;
 		}
 
-		if (($this->longQueryTimeSeconds !== NULL) && ($time >= $this->longQueryTimeSeconds)) {
+		if (($this->longQueryTimeMs !== NULL) && ($timeMs >= $this->longQueryTimeMs)) {
 			$this->longQueryCount++;
 		}
 
@@ -124,7 +126,7 @@ class BarPanel implements Tracy\IBarPanel
 			}
 		}
 
-		$this->queries[] = [$query, $time, $explain ? self::explain($query) : NULL, $source];
+		$this->queries[] = [$query, $timeMs, $explain ? self::explain($query) : NULL, $source];
 	}
 
 
@@ -219,7 +221,7 @@ class BarPanel implements Tracy\IBarPanel
 		$totalTime = $this->totalTimeSeconds;
 		$queries = $this->queries;
 
-		$longQueryTime = $this->longQueryTimeSeconds;
+		$longQueryTime = $this->longQueryTimeMs;
 
 		$longQueryCount = $this->longQueryCount;
 		$repeatingQueries = $this->getRepeatingQueries();
@@ -261,14 +263,13 @@ class BarPanel implements Tracy\IBarPanel
 
 
 	/**
-	 * @return list<array<mixed>>
+	 * @return list<array{0: PhPgSql\Db\Query, list<string>}>
 	 */
 	private function getNonParsedColumnsQueries(): array
 	{
 		if ($this->nonParsedColumnsQueries === NULL) {
 			$this->nonParsedColumnsQueries = [];
 
-			/** @var PhPgSql\Db\Result $result */
 			foreach ($this->results as $result) {
 				$nonParsedColumns = \array_filter($result->getParsedColumns() ?? [], static function (bool $isUsed): bool {
 					return !$isUsed;
@@ -290,12 +291,12 @@ class BarPanel implements Tracy\IBarPanel
 		string $name,
 		bool $explain,
 		bool $notices,
-		float|NULL $longQueryTime = NULL,
+		float|NULL $longQueryTimeMs = NULL,
 		bool $detectRepeatingQueries = FALSE,
 		bool $detectNonParsedColumns = FALSE,
 	): self
 	{
-		$panel = new static($connection, $queryDumper, $name, $explain, $notices, $longQueryTime, $detectRepeatingQueries, $detectNonParsedColumns);
+		$panel = new static($connection, $queryDumper, $name, $explain, $notices, $longQueryTimeMs, $detectRepeatingQueries, $detectNonParsedColumns);
 		Tracy\Debugger::getBar()->addPanel($panel);
 		return $panel;
 	}
