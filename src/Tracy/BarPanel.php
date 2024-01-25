@@ -19,7 +19,7 @@ class BarPanel implements Tracy\IBarPanel
 
 	private bool $detectRepeatingQueries;
 
-	private float $totalTimeSeconds = 0;
+	private float $totalTimeMs = 0;
 
 	private int $count = 0;
 
@@ -92,7 +92,7 @@ class BarPanel implements Tracy\IBarPanel
 		$timeMs = NULL;
 		if ($timeNs !== NULL) {
 			$timeMs = $timeNs / 1000000;
-			$this->totalTimeSeconds += $timeMs;
+			$this->totalTimeMs += $timeMs;
 		}
 
 		if (($this->longQueryTimeMs !== NULL) && ($timeMs >= $this->longQueryTimeMs)) {
@@ -193,7 +193,7 @@ class BarPanel implements Tracy\IBarPanel
 	{
 		$name = $this->name;
 		$count = $this->count;
-		$totalTime = $this->totalTimeSeconds;
+		$totalTimeMs = $this->totalTimeMs;
 
 		$hasLongQuery = $this->longQueryCount > 0;
 		$hasRepeatingQueries = \count($this->getRepeatingQueries()) > 0;
@@ -218,10 +218,10 @@ class BarPanel implements Tracy\IBarPanel
 
 		$name = $this->name;
 		$count = $this->count;
-		$totalTime = $this->totalTimeSeconds;
+		$totalTimeMs = $this->totalTimeMs;
 		$queries = $this->queries;
 
-		$longQueryTime = $this->longQueryTimeMs;
+		$longQueryTimeMs = $this->longQueryTimeMs;
 
 		$longQueryCount = $this->longQueryCount;
 		$repeatingQueries = $this->getRepeatingQueries();

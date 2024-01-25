@@ -37,7 +37,7 @@ use Tracy\Helpers;
 	}
 </script>
 
-<h1>Queries: <?php echo $count, ($totalTime ? \sprintf(', time: %0.3f ms', $totalTime * 1000) : ''), ', ', \htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
+<h1>Queries: <?php echo $count, ($totalTimeMs ? \sprintf(', time: %0.3f ms', $totalTimeMs) : ''), ', ', \htmlspecialchars($name, ENT_NOQUOTES, 'UTF-8') ?></h1>
 
 <?php $requestPanelId = \uniqid($name); ?>
 <?php if ($longQueryCount > 0 || $repeatingQueries !== [] || $nonParsedColumnsQueries !== []): ?>

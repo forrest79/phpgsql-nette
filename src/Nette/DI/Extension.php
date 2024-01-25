@@ -163,7 +163,7 @@ class Extension extends Nette\DI\CompilerExtension
 	{
 		return Schema\Expect::arrayOf(
 			Schema\Expect::structure([
-				'config' => Schema\Expect::array([]),
+				'config' => Schema\Expect::array(),
 				'forceNew' => Schema\Expect::bool(FALSE),
 				'async' => Schema\Expect::bool(FALSE),
 				'errorVerbosity' => Schema\Expect::int(),
@@ -179,7 +179,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'queryDumper' => Schema\Expect::mixed(), // null|false|string
 				'explain' => Schema\Expect::bool(FALSE),
 				'notices' => Schema\Expect::bool(FALSE),
-				'longQueryTimeMs' => Schema\Expect::float(),
+				'longQueryTimeMs' => Schema\Expect::anyOf(Schema\Expect::float(), Schema\Expect::int())->castTo('float'),
 				'repeatingQueries' => Schema\Expect::bool(FALSE),
 				'nonParsedColumns' => Schema\Expect::bool(FALSE),
 			]),

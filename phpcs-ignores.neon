@@ -79,7 +79,7 @@ ignoreErrors:
 
 	-
 		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-		message: Unused variable $longQueryTime.
+		message: Unused variable $longQueryTimeMs.
 		count: 1
 		path: src/Tracy/BarPanel.php
 
@@ -121,7 +121,7 @@ ignoreErrors:
 
 	-
 		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-		message: Unused variable $totalTime.
+		message: Unused variable $totalTimeMs.
 		count: 2
 		path: src/Tracy/BarPanel.php
 
