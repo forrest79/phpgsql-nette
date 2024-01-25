@@ -23,7 +23,7 @@ The recommended way to install PhPgSql - Nette is through Composer:
 composer require forrest79/phpgsql-nette
 ```
 
-PhPgSql requires PHP 7.2.0 and pgsql binary extension.
+PhPgSql requires PHP 8.1.0 and pgsql binary extension.
 
 
 ## Using
@@ -106,7 +106,7 @@ $container->getService('database.second.connection');
 
 ## Use your own connection class
 
-By default `Forrest79\PhPgSql\Fluent\Connection` is registered to DI as connection class. If you want to use other (your own) connection class, you need to use own connection factory. This is class that implements `Forrest79\PhPgSql\Nette\Connection\ConnectionCreator` interface, and you must specify the concrete return type with your connection class.
+By default `Forrest79\PhPgSql\Fluent\Connection` is registered to DI as connection class. If you want to use other (your own) connection class, you need to use your own connection factory. This is class that implements `Forrest79\PhPgSql\Nette\Connection\ConnectionCreator` interface, and you must specify the concrete return type with your connection class.
 
 Example:
 
