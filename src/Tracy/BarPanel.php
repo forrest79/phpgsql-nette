@@ -112,7 +112,7 @@ class BarPanel implements Tracy\IBarPanel
 				($class !== self::class)
 				&& !\is_a($class, PhPgSql\Db\Events::class, TRUE)
 				&& !(\is_a($class, PhPgSql\Db\Connection::class, TRUE) && \in_array($function, ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
-				&& !(\is_a($class, PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($function, ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'getIterator'], TRUE))
+				&& !(\is_a($class, PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($function, ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'fetchIterator'], TRUE))
 				&& !static::backtraceContinueIterate($class, $function)
 			) {
 				break;
