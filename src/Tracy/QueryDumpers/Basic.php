@@ -41,17 +41,15 @@ class Basic extends Tracy\QueryDumper
 
 		/** @phpstan-var string */
 		return \preg_replace_callback($highlighter, static function (array $m): string {
-			if (isset($m[1]) && ($m[1] !== '')) { // comment
+			if ($m[1] !== '') { // comment
 				return \sprintf('<em style="color:gray">%s</em>', $m[1]);
-			} elseif (isset($m[2]) && ($m[2] !== '')) { // important keywords
+			} elseif ($m[2] !== '') { // important keywords
 				return \sprintf('<strong style="color:blue">%s</strong>', $m[2]);
-			} elseif (isset($m[3]) && ($m[3] !== '')) { // other keywords
+			} elseif ($m[3] !== '') { // other keywords
 				return \sprintf('<strong style="color:green">%s</strong>', $m[3]);
-			} elseif (isset($m[4]) && ($m[4] !== '')) { // variables
+			} elseif ($m[4] !== '') { // variables
 				return \sprintf('<strong style="color:brown">%s</strong>', $m[4]);
 			}
-
-			return \sprintf('<strong style="color:red">%s</strong>', $m[0]); // error
 		}, $sql);
 	}
 

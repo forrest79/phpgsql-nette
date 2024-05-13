@@ -18,11 +18,11 @@
 	"require-dev": {
 		"nette/tester": "^2.5",
 		"tracy/tracy":  "^2.10",
-		"doctrine/sql-formatter": "^1.1",
+		"doctrine/sql-formatter": "^1.4",
 		"forrest79/phpcs": "^1.5",
 		"forrest79/phpcs-ignores": "^0.5",
-		"phpstan/phpstan": "^1.10",
-		"phpstan/phpstan-strict-rules": "^1.5"
+		"phpstan/phpstan": "^1.12",
+		"phpstan/phpstan-strict-rules": "^1.6"
 	},
 	"suggest": {
 		"doctrine/sql-formatter": "For better formating SQL queries to Tracy bar and bluescreen."
