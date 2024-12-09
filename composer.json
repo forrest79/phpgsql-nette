@@ -12,17 +12,17 @@
 	],
 	"require": {
 		"php": "^8.1",
-		"forrest79/phpgsql": "^1.5",
+		"forrest79/phpgsql": "^1.7",
 		"nette/di": "^3.0"
 	},
 	"require-dev": {
 		"nette/tester": "^2.5",
 		"tracy/tracy":  "^2.10",
-		"doctrine/sql-formatter": "^1.4",
+		"doctrine/sql-formatter": "^1.5",
 		"forrest79/phpcs": "^1.5",
 		"forrest79/phpcs-ignores": "^0.5",
-		"phpstan/phpstan": "^1.12",
-		"phpstan/phpstan-strict-rules": "^1.6"
+		"phpstan/phpstan": "^2.0",
+		"phpstan/phpstan-strict-rules": "^2.0"
 	},
 	"suggest": {
 		"doctrine/sql-formatter": "For better formating SQL queries to Tracy bar and bluescreen."

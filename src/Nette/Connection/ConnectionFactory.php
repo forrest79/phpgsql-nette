@@ -6,7 +6,7 @@ abstract class ConnectionFactory implements ConnectionCreator
 {
 
 	/**
-	 * @param array<string, mixed> $config
+	 * @param array<string, string|int|float|NULL> $config
 	 */
 	protected function prepareConfig(array $config): string
 	{

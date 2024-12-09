@@ -26,6 +26,7 @@ class Extension extends Nette\DI\CompilerExtension
 	{
 		$autowired = TRUE;
 		foreach ((array) $this->getConfig() as $name => $config) {
+			\assert($config instanceof \stdClass);
 			$config->autowired ??= $autowired;
 			$autowired = FALSE;
 			$this->setupDatabase((array) $config, $name);
@@ -63,8 +64,8 @@ class Extension extends Nette\DI\CompilerExtension
 			$connection->addSetup('setConnectAsyncWaitSeconds', [$config['asyncWaitSeconds']]);
 		}
 
-		if ($config['defaultRowFactory'] !== NULL) {
-			$connection->addSetup('setDefaultRowFactory', [$config['defaultRowFactory']]);
+		if ($config['rowFactory'] !== NULL) {
+			$connection->addSetup('setRowFactory', [$config['rowFactory']]);
 		}
 
 		if ($config['dataTypeParser'] !== NULL) {
@@ -168,7 +169,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'async' => Schema\Expect::bool(FALSE),
 				'errorVerbosity' => Schema\Expect::int(),
 				'asyncWaitSeconds' => Schema\Expect::int(),
-				'defaultRowFactory' => Schema\Expect::string(),
+				'rowFactory' => Schema\Expect::string(),
 				'dataTypeParser' => Schema\Expect::string(),
 				'dataTypeCache' => Schema\Expect::string(),
 				'lazy' => Schema\Expect::bool(TRUE),
@@ -183,7 +184,7 @@ class Extension extends Nette\DI\CompilerExtension
 				'repeatingQueries' => Schema\Expect::bool(FALSE),
 				'nonParsedColumns' => Schema\Expect::bool(FALSE),
 			]),
-		)->before(static function ($config) {
+		)->before(static function (array $config): array {
 			foreach ($config as $name => $values) {
 				if (\is_scalar($values) || (\is_array($values) && $name === 'config')) {
 					$config = ['default' => $config];
