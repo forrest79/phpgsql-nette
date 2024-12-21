@@ -111,6 +111,7 @@ class BarPanel implements Tracy\IBarPanel
 			if (
 				($class !== self::class)
 				&& !\is_a($class, PhPgSql\Db\Events::class, TRUE)
+				&& !(\is_a($class, PhPgSql\Db\Transaction::class, TRUE) && \in_array($function, ['begin', 'commit', 'rollback', 'savepoint', 'releaseSavepoint', 'rollbackToSavepoint'], TRUE))
 				&& !(\is_a($class, PhPgSql\Db\Connection::class, TRUE) && \in_array($function, ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], TRUE))
 				&& !(\is_a($class, PhPgSql\Fluent\QueryExecute::class, TRUE) && \in_array($function, ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'fetchIterator'], TRUE))
 				&& !static::backtraceContinueIterate($class, $function)
