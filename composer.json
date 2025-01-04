@@ -21,7 +21,7 @@
 		"doctrine/sql-formatter": "^1.5",
 		"forrest79/phpcs": "^1.5",
 		"forrest79/phpcs-ignores": "^0.5",
-		"phpstan/phpstan": "^2.0",
+		"phpstan/phpstan": "^2.1",
 		"phpstan/phpstan-strict-rules": "^2.0"
 	},
 	"suggest": {
