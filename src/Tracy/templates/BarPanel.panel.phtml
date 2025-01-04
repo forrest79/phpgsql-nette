@@ -11,11 +11,10 @@ use Tracy\Helpers;
 	#tracy-debug td.phpgsql-panel-center { text-align: center; }
 	#tracy-debug td.phpgsql-panel-sql { background: white !important; }
 	#tracy-debug a.tracy-editor { color: #bbb !important; font-size: 11px; }
+	#tracy-debug a.phpgsql-panel-button { display: inline-block; width: 12px; height: 12px; line-height: 12px; }
+	#tracy-debug a.phpgsql-panel-button:focus { background: none; }
 	#tracy-debug .phpgsql-panel-binded td, #tracy-debug .phpgsql-panel-explain td { white-space: pre; }
 	#tracy-debug .phpgsql-panel-binded th { position: relative; }
-	#tracy-debug .phpgsql-panel-binded a { display: inline-block; width: 16px; height: 16px; vertical-align: bottom; }
-	#tracy-debug .phpgsql-panel-binded a:focus { background: none; }
-	#tracy-debug .phpgsql-panel-binded a svg { width: 14px; height: 14px; padding: 2px; }
 	#tracy-debug .phpgsql-panel-explain td { font-size: 11px; }
 	#tracy-debug .phpgsql-panel-warning { background-color: #ff6363 !important; color: #fff !important; }
 	#tracy-debug div.phpgsql-panel-warnings { font-size: 11px; margin: 5px 0 10px; }
@@ -25,8 +24,9 @@ use Tracy\Helpers;
 </style>
 
 <script type="text/javascript">
-	window.phpgsqlCopyToClipboard = function (copyButton) {
-		const sql = copyButton.closest('table').querySelector('td').innerText.trim();
+	let Tracy = window.Tracy = window.Tracy || {};
+	Tracy.phpgsqlCopyToClipboard = function (copyButton, binded) {
+		const sql = binded ? copyButton.closest('tr').querySelector('td[data-binded-sql-query]').innerText.trim() : copyButton.closest('tr').querySelector('span[data-sql-query]').innerText.trim();
 		navigator.clipboard.writeText(sql);
 
 		const svgCopy = copyButton.innerHTML;
@@ -82,6 +82,7 @@ use Tracy\Helpers;
 			<th>Time&nbsp;ms</th>
 			<th>SQL Query</th>
 			<th>Params</th>
+			<th></th>
 		</tr>
 		<?php
 			foreach ($queries as $query):
@@ -106,26 +107,28 @@ use Tracy\Helpers;
 						}
 					?>
 					<?php if ($hasParams): ?>
-						<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-binded">binded</a>
+						<br />
+						<a href="javascript:void(0);" onclick="Tracy.phpgsqlCopyToClipboard(this, true);" class="phpgsql-panel-button" title="Copy binded SQL query to clipboard">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg>
+						</a>
+						<a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-binded">binded</a>
 					<?php endif ?>
 					<?php if ($explain): ?>
-						<br /><a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-explain">explain</a>
+						<br />
+						<a class="tracy-toggle tracy-collapsed" data-tracy-ref="^tr .phpgsql-panel-explain">explain</a>
 					<?php endif ?>
 				</td>
 				<td class="phpgsql-panel-sql">
-					<?php echo ($sql instanceof PhPgSql\Db\Query) ? $queryDump($sql->getSql()) : $sql; ?>
+					<span data-sql-query><?php echo ($sql instanceof PhPgSql\Db\Query) ? $queryDump($sql->getSql()) : $sql; ?></span>
 					<?php if ($hasParams): ?>
 						<table class="tracy-collapsed phpgsql-panel-binded">
 							<tr>
 								<th>
-									<a href="javascript:void(0);" onclick="phpgsqlCopyToClipboard(this);" title="Copy to clipboard">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg>
-									</a>
 									Binded query:
 								</th>
 							</tr>
 							<tr>
-								<td><?php echo $queryDump($sql->getSql(), $sql->getParams()); ?></td>
+								<td data-binded-sql-query><?php echo $queryDump($sql->getSql(), $sql->getParams()); ?></td>
 							</tr>
 						</table>
 					<?php endif ?>
@@ -145,6 +148,11 @@ use Tracy\Helpers;
 				</td>
 				<td>
 					<?php if ($hasParams) echo $paramsDump($sql->getParams()); ?>
+				</td>
+				<td>
+					<a href="javascript:void(0);" onclick="Tracy.phpgsqlCopyToClipboard(this, false);" class="phpgsql-panel-button" title="Copy SQL query to clipboard">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg>
+					</a>
 				</td>
 			</tr>
 		<?php endforeach ?>
