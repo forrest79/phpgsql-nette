@@ -18,7 +18,7 @@ abstract class QueryDumper
 		if ($parameters !== []) {
 			$sql = \preg_replace_callback(
 				'/\$(\d+)/',
-				static function ($matches) use (&$parameters): string {
+				static function (array $matches) use (&$parameters): string {
 					$i = \intval($matches[1]) - 1;
 
 					if (\array_key_exists($i, $parameters)) {

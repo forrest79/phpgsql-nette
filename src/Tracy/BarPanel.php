@@ -95,7 +95,7 @@ class BarPanel implements Tracy\IBarPanel
 			$this->totalTimeMs += $timeMs;
 		}
 
-		if (($this->longQueryTimeMs !== NULL) && ($timeMs >= $this->longQueryTimeMs)) {
+		if (($this->longQueryTimeMs !== NULL) && (($timeMs ?? 0) >= $this->longQueryTimeMs)) {
 			$this->longQueryCount++;
 		}
 
@@ -152,7 +152,7 @@ class BarPanel implements Tracy\IBarPanel
 			$this->queries[] = [
 				\sprintf(
 					'<pre class="dump"><strong style="color:gray">%s</strong></pre>',
-					\implode('<br><br>', \array_map(static function ($notice): string {
+					\implode('<br><br>', \array_map(static function (string $notice): string {
 						return '<em>Notice:</em><br>' . \substr($notice, 9);
 					}, \array_map('nl2br', $notices))),
 				),
