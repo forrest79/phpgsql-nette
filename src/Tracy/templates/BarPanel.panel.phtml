@@ -84,6 +84,11 @@ use Tracy\Helpers;
 			<th>SQL Query</th>
 			<th>Params</th>
 		</tr>
+		<?php if ($count > count($queries)): ?>
+			<tr>
+				<td colspan="4" class="phpgsql-panel-sql"><em>...showing only the last <?php echo number_format(count($queries), 0, '.', ' '); ?> SQL queries (<?php echo $count - count($queries); ?> are ommited)...</em></td>
+			</tr>
+		<?php endif ?>
 		<?php
 			foreach ($queries as $query):
 				[$sql, $timeMs, $explain, $source] = $query;

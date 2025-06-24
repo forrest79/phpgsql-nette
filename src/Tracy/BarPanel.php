@@ -9,6 +9,8 @@ class BarPanel implements Tracy\IBarPanel
 {
 	public static bool $disabled = FALSE;
 
+	public static int $showMaxLastQueries = 1000;
+
 	private PhPgSql\Db\Connection $connection;
 
 	private PhPgSql\Tracy\QueryDumper $queryDumper;
@@ -220,7 +222,7 @@ class BarPanel implements Tracy\IBarPanel
 		$name = $this->name;
 		$count = $this->count;
 		$totalTimeMs = $this->totalTimeMs;
-		$queries = $this->queries;
+		$queries = \array_slice($this->queries, -1 * self::$showMaxLastQueries);
 
 		$longQueryTimeMs = $this->longQueryTimeMs;
 

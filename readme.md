@@ -144,7 +144,7 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
 
 Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from the array with configuration. Items with `NULL` values are skipped.
 
-And now, you just need to override old connection factory with this one in DI configuration, `services` section, like this:
+And now, you need to override old connection factory with this one in DI configuration, `services` section, like this:
 
 ```yaml
 services:
@@ -173,12 +173,13 @@ Basically, `BarPanel` ignores all classes/function from PhPgSql library to show 
 When you use some own custom wrapping objects, you want to ignore in the call stack, you can extend `backtraceContinueIterate()` method and add your own logic here. For example:
 
 ```php
-
 protected static function backtraceContinueIterate(string $class, string $function): bool
 {
     return parent::backtraceContinueIterate() // just for sure, you can use multiple extends...
         || (is_a($class, MyOwnFluentQuery::class, TRUE) && ($function === 'count'))
         || (is_a($class, Mapper\Record::class, TRUE) && ($function === 'fetch'));
 }
-
 ```
+
+- by default, last 1 000 SQL queries are displayed. You can set your own limit with static property `Forrest79\PhPgSql\Tracy\BarPanel::$showMaxLastQueries = 10000` 
+- bar can be disabled with static property `Forrest79\PhPgSql\Tracy\BarPanel::$disabled = TRUE`

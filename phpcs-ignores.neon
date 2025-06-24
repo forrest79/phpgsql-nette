@@ -20,7 +20,7 @@ ignoreErrors:
 	-
 		sniff: SlevomatCodingStandard.Classes.ForbiddenPublicProperty.ForbiddenPublicProperty
 		message: Do not use public properties. Use method access instead.
-		count: 1
+		count: 2
 		path: src/Tracy/BarPanel.php
 
 	-
