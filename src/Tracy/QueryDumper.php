@@ -22,10 +22,10 @@ abstract class QueryDumper
 					$i = \intval($matches[1]) - 1;
 
 					if (\array_key_exists($i, $parameters)) {
-						/** @phpstan-var scalar|NULL $value */
+						/** @phpstan-var scalar|null $value */
 						$value = $parameters[$i];
 						unset($parameters[$i]);
-						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
+						return ($value === null) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
 					}
 
 					return $matches[0];

@@ -6,13 +6,13 @@ abstract class ConnectionFactory implements ConnectionCreator
 {
 
 	/**
-	 * @param array<string, string|int|float|NULL> $config
+	 * @param array<string, string|int|float|null> $config
 	 */
 	protected function prepareConfig(array $config): string
 	{
 		$configItems = [];
 		foreach ($config as $key => $value) {
-			if ($value !== NULL) {
+			if ($value !== null) {
 				$configItems[] = $key . '=\'' . $value . '\'';
 			}
 		}

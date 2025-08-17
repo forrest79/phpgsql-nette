@@ -17,17 +17,17 @@ class BluescreenPanel
 
 
 	/**
-	 * @return array{tab: string, panel: string}|NULL
+	 * @return array{tab: string, panel: string}|null
 	 */
-	public function renderException(\Throwable|NULL $e): array|NULL
+	public function renderException(\Throwable|null $e): array|null
 	{
 		if (!$e instanceof PhPgSql\Db\Exceptions\QueryException) {
-			return NULL;
+			return null;
 		}
 
 		$query = $e->getQuery();
-		if ($query === NULL) {
-			return NULL;
+		if ($query === null) {
+			return null;
 		}
 
 		$parameters = '';
@@ -56,7 +56,7 @@ class BluescreenPanel
 
 	public static function initialize(PhPgSql\Tracy\QueryDumper $queryDumper): void
 	{
-		Tracy\Debugger::getBlueScreen()->addPanel(static function (\Throwable|NULL $e) use ($queryDumper): array|NULL {
+		Tracy\Debugger::getBlueScreen()->addPanel(static function (\Throwable|null $e) use ($queryDumper): array|null {
 			return (new static($queryDumper))->renderException($e);
 		});
 	}

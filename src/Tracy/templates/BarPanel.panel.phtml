@@ -107,13 +107,13 @@ use Tracy\Helpers;
 						</a>
 					<?php endif ?>
 				</td>
-				<td<?php if (($longQueryTimeMs !== NULL) && ($timeMs >= $longQueryTimeMs)): ?> class="phpgsql-panel-warning"<?php endif ?>>
+				<td<?php if (($longQueryTimeMs !== null) && ($timeMs >= $longQueryTimeMs)): ?> class="phpgsql-panel-warning"<?php endif ?>>
 					<?php
-						if ($timeMs === FALSE) {
+						if ($timeMs === false) {
 							echo '-';
-						} else if ($timeMs !== NULL) {
+						} else if ($timeMs !== null) {
 							$formattedTime = \sprintf('%0.3f', $timeMs);
-							if (($longQueryTimeMs !== NULL) && ($timeMs >= $longQueryTimeMs)) {
+							if (($longQueryTimeMs !== null) && ($timeMs >= $longQueryTimeMs)) {
 								echo \sprintf('<strong %s>%s</strong>', ($longQueryCount === 1) ? 'id="phpgsql-panel-long-run-query-' . $requestPanelId . '" ' : '', $formattedTime);
 							} else {
 								echo $formattedTime;
@@ -145,7 +145,7 @@ use Tracy\Helpers;
 							</tr>
 						</table>
 					<?php endif ?>
-					<?php if ($explain !== NULL): ?>
+					<?php if ($explain !== null): ?>
 						<table class="tracy-collapsed phpgsql-panel-explain">
 							<tr>
 								<th>Explain:</th>
@@ -155,7 +155,7 @@ use Tracy\Helpers;
 							</tr>
 						</table>
 					<?php endif ?>
-					<?php if ($source !== NULL) {
+					<?php if ($source !== null) {
 						echo Helpers::editorLink($source['file'], $source['line']);
 					} ?>
 				</td>

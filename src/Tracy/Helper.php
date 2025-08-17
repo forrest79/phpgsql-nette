@@ -15,7 +15,7 @@ class Helper
 		return Tracy\Dumper::toHtml(
 			self::prepareParameters($parameters),
 			[
-				Tracy\Dumper::LAZY => FALSE,
+				Tracy\Dumper::LAZY => false,
 				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
 				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
 			],

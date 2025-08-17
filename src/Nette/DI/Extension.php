@@ -24,11 +24,11 @@ class Extension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration(): void
 	{
-		$autowired = TRUE;
+		$autowired = true;
 		foreach ((array) $this->getConfig() as $name => $config) {
 			\assert($config instanceof \stdClass);
 			$config->autowired ??= $autowired;
-			$autowired = FALSE;
+			$autowired = false;
 			$this->setupDatabase((array) $config, $name);
 			$this->names[] = $name;
 		}
@@ -56,30 +56,30 @@ class Extension extends Nette\DI\CompilerExtension
 			])
 			->setAutowired($config['autowired']);
 
-		if ($config['errorVerbosity'] !== NULL) {
+		if ($config['errorVerbosity'] !== null) {
 			$connection->addSetup('setErrorVerbosity', [$config['errorVerbosity']]);
 		}
 
-		if ($config['asyncWaitSeconds'] !== NULL) {
+		if ($config['asyncWaitSeconds'] !== null) {
 			$connection->addSetup('setConnectAsyncWaitSeconds', [$config['asyncWaitSeconds']]);
 		}
 
-		if ($config['rowFactory'] !== NULL) {
+		if ($config['rowFactory'] !== null) {
 			$connection->addSetup('setRowFactory', [$config['rowFactory']]);
 		}
 
-		if ($config['dataTypeParser'] !== NULL) {
+		if ($config['dataTypeParser'] !== null) {
 			$connection->addSetup('setDataTypeParser', [$config['dataTypeParser']]);
 		}
 
-		if ($config['dataTypeCache'] !== NULL) {
+		if ($config['dataTypeCache'] !== null) {
 			$connection->addSetup('setDataTypeCache', [$config['dataTypeCache']]);
 		}
 
-		if ($config['debugger'] === TRUE) {
-			if (($config['queryDumper'] === NULL) || ($config['queryDumper'] === FALSE)) {
+		if ($config['debugger'] === true) {
+			if (($config['queryDumper'] === null) || ($config['queryDumper'] === false)) {
 				$queryDumper = $this->prefix(\sprintf('%s.queryDumper', $name));
-				if ($config['queryDumper'] === NULL) {
+				if ($config['queryDumper'] === null) {
 					if (class_exists(Doctrine\SqlFormatter\SqlFormatter::class)) {
 						$queryDumperClass = PhPgSql\Tracy\QueryDumpers\SqlFormatter::class;
 					} else {
@@ -119,7 +119,7 @@ class Extension extends Nette\DI\CompilerExtension
 			}
 		}
 
-		if ($config['lazy'] === FALSE) {
+		if ($config['lazy'] === false) {
 			$connection->addSetup('connect');
 		}
 	}
@@ -142,7 +142,7 @@ class Extension extends Nette\DI\CompilerExtension
 
 			$connectionFactoryReflection = new \ReflectionClass($connectionFactoryType);
 			$connectionReturnType = $connectionFactoryReflection->getMethod('create')->getReturnType();
-			$connectionType = $connectionReturnType === NULL ? '' : $connectionReturnType->getName();
+			$connectionType = $connectionReturnType === null ? '' : $connectionReturnType->getName();
 			\assert(\is_string($connectionType));
 			if (!\is_subclass_of($connectionType, PhPgSql\Db\Connection::class)) {
 				throw new \InvalidArgumentException(\sprintf(
@@ -165,24 +165,24 @@ class Extension extends Nette\DI\CompilerExtension
 		return Schema\Expect::arrayOf(
 			Schema\Expect::structure([
 				'config' => Schema\Expect::array(),
-				'forceNew' => Schema\Expect::bool(FALSE),
-				'async' => Schema\Expect::bool(FALSE),
+				'forceNew' => Schema\Expect::bool(false),
+				'async' => Schema\Expect::bool(false),
 				'errorVerbosity' => Schema\Expect::int(),
 				'asyncWaitSeconds' => Schema\Expect::int(),
 				'rowFactory' => Schema\Expect::string(),
 				'dataTypeParser' => Schema\Expect::string(),
 				'dataTypeCache' => Schema\Expect::string(),
-				'lazy' => Schema\Expect::bool(TRUE),
+				'lazy' => Schema\Expect::bool(true),
 				'autowired' => Schema\Expect::bool(),
 				'debugger' => Schema\Expect::bool(\class_exists(Tracy\BlueScreen::class)),
 				'tracyBluescreenPanelClass' => Schema\Expect::string(PhPgSql\Tracy\BluescreenPanel::class),
 				'tracyBarPanelClass' => Schema\Expect::string(PhPgSql\Tracy\BarPanel::class),
 				'queryDumper' => Schema\Expect::mixed(), // null|false|string
-				'explain' => Schema\Expect::bool(FALSE),
-				'notices' => Schema\Expect::bool(FALSE),
+				'explain' => Schema\Expect::bool(false),
+				'notices' => Schema\Expect::bool(false),
 				'longQueryTimeMs' => Schema\Expect::anyOf(Schema\Expect::float(), Schema\Expect::int())->castTo('float'),
-				'repeatingQueries' => Schema\Expect::bool(FALSE),
-				'nonParsedColumns' => Schema\Expect::bool(FALSE),
+				'repeatingQueries' => Schema\Expect::bool(false),
+				'nonParsedColumns' => Schema\Expect::bool(false),
 			]),
 		)->before(static function (array $config): array {
 			foreach ($config as $name => $values) {

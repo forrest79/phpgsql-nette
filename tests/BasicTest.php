@@ -57,7 +57,7 @@ final class BasicTest extends Tester\TestCase
 
 		$compiler = new DI\Compiler();
 		$compiler->addExtension('tracy', new Tracy\Bridges\Nette\TracyExtension());
-		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(FALSE));
+		$compiler->addExtension('database', new PhPgSql\Nette\DI\Extension(false));
 		eval($compiler->addConfig($config)->setClassName($containerName)->compile());
 
 		$container = new $containerName();

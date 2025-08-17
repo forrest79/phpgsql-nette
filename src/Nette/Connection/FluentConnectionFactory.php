@@ -8,7 +8,7 @@ class FluentConnectionFactory extends ConnectionFactory
 {
 
 	/**
-	 * @param array<string, string|int|float|NULL> $config
+	 * @param array<string, string|int|float|null> $config
 	 */
 	public function create(array $config, bool $forceNew, bool $async): PhPgSql\Fluent\Connection
 	{

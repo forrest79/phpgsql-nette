@@ -46,11 +46,11 @@ database:
         password: postgres
         dbname: postgres
         connect_timeout: 5 # good habit is to use connect_timeout parameter
-    errorVerbosity: ::constant(PGSQL_ERRORS_VERBOSE) # default is NULL and it will use default error verbose PGSQL_ERRORS_DEFAULT, other value can be PGSQL_ERRORS_TERSE
-    asyncWaitSeconds: 5 # default is NULL and it will use default seconds value
-    rowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is NULL, and default row factory is used
-    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is NULL, and default data type parser is used
-    dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needed to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is NULL and cache is disabled
+    errorVerbosity: ::constant(PGSQL_ERRORS_VERBOSE) # default is null and it will use default error verbose PGSQL_ERRORS_DEFAULT, other value can be PGSQL_ERRORS_TERSE
+    asyncWaitSeconds: 5 # default is null and it will use default seconds value
+    rowFactory: @App\PhPgSql\Db\RowFactories\MyOwnRowFactory # this service is needed to be registered, default is null, and default row factory is used
+    dataTypeParser: @App\PhPgSql\Db\DataTypeParsers\MyOwnDataTypeParser # this service is needed to be registered, default is null, and default data type parser is used
+    dataTypeCache: @Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile # this service is needed to be registered like this `- Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('%tempDir%/phpgsql/data-types-cache.php')`, this is recommended settings, default is null and cache is disabled
     forceNew: true # default is false
     async: true # default is false, when true, connection is made in async way, and it's not blocking the next PHP code execution (before the first query is run, a library is waiting for active connection)
     lazy: false # default is true, when false, connection is made right after the Connection object is created, when true, connection is made with the first query
@@ -61,9 +61,9 @@ database:
     queryDumper: false # default is null (when false, no query dumper is used, and all SQL queries are displayed as it is, when null - auto-detection is used - when Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
     explain: true # default is false (when true, if the Tracy panel is enabled, explain is shown for every query)
     notices: true # default is false (when true, if the Tracy panel is enabled, after every SQL command and before connection is closed, notices are got and put into the query log)
-    longQueryTimeMs: 100 # default is NULL = disabled, is set (float, time in milliseconds) and Tracy panel is enabled, all queries that takes longer than this value is marked in the panel with bold red time)
-    repeatingQueries: true # default is FALSE (when true, if the Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
-    nonParsedColumns: true # default is FALSE (when true, if the Tracy panel is enabled, queries with some non-parsed (used) columns are detected and listed)
+    longQueryTimeMs: 100 # default is null = disabled, is set (float, time in milliseconds) and Tracy panel is enabled, all queries that takes longer than this value is marked in the panel with bold red time)
+    repeatingQueries: true # default is false (when true, if the Tracy panel is enabled, repeating queries are detected and listed - except BEGIN, COMMIT, ROLLBACK and SET statements)
+    nonParsedColumns: true # default is false (when true, if the Tracy panel is enabled, queries with some non-parsed (used) columns are detected and listed)
 ```
 
 Or multiple connections:
@@ -114,7 +114,7 @@ Example:
 class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\ConnectionCreator
 {
     /** @var int */
-    private $statementTimeout = NULL;
+    private $statementTimeout = null;
 
     public function __construct(int $sessionTimeout)
     {
@@ -142,7 +142,7 @@ class ConnectionFactory implements Forrest79\PhPgSql\Nette\Connection\Connection
 }
 ```
 
-Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from the array with configuration. Items with `NULL` values are skipped.
+Function `prepareConfig(array $config)` create connection string (`key='value' key='value' ...`) from the array with configuration. Items with `null` values are skipped.
 
 And now, you need to override old connection factory with this one in DI configuration, `services` section, like this:
 
@@ -176,10 +176,10 @@ When you use some own custom wrapping objects, you want to ignore in the call st
 protected static function backtraceContinueIterate(string $class, string $function): bool
 {
     return parent::backtraceContinueIterate() // just for sure, you can use multiple extends...
-        || (is_a($class, MyOwnFluentQuery::class, TRUE) && ($function === 'count'))
-        || (is_a($class, Mapper\Record::class, TRUE) && ($function === 'fetch'));
+        || (is_a($class, MyOwnFluentQuery::class, true) && ($function === 'count'))
+        || (is_a($class, Mapper\Record::class, true) && ($function === 'fetch'));
 }
 ```
 
 - by default, last 1 000 SQL queries are displayed. You can set your own limit with static property `Forrest79\PhPgSql\Tracy\BarPanel::$showMaxLastQueries = 10000` 
-- bar can be disabled with static property `Forrest79\PhPgSql\Tracy\BarPanel::$disabled = TRUE`
+- bar can be disabled with static property `Forrest79\PhPgSql\Tracy\BarPanel::$disabled = true`
