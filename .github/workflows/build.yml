@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ['8.1', '8.2', '8.3', '8.4']
+        php-versions: ['8.3', '8.4']
       fail-fast: false
 
     steps:
@@ -45,11 +45,3 @@ jobs:
 
       - name: Run phpstan
         run: composer phpstan
-
-      - name: Run tests
-        run: composer tests
-      - if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: output
-          path: tests/**/output

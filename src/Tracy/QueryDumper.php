@@ -22,8 +22,10 @@ abstract class QueryDumper
 					$i = \intval($matches[1]) - 1;
 
 					if (\array_key_exists($i, $parameters)) {
-						/** @phpstan-var scalar|null $value */
 						$value = $parameters[$i];
+
+						\assert(\is_scalar($value) || $value === null);
+
 						unset($parameters[$i]);
 						return ($value === null) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
 					}
@@ -32,6 +34,7 @@ abstract class QueryDumper
 				},
 				$sql,
 			);
+
 			\assert(\is_string($sql));
 		}
 

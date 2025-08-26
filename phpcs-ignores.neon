@@ -1,29 +1,5 @@
 ignoreErrors:
 	-
-		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "create"
-		count: 1
-		path: src/Nette/Connection/ConnectionCreator.php
-
-	-
-		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
-		message: All classes should be declared using either the "abstract" or "final" keyword.
-		count: 1
-		path: src/Nette/Connection/FluentConnectionFactory.php
-
-	-
-		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
-		message: All classes should be declared using either the "abstract" or "final" keyword.
-		count: 1
-		path: src/Nette/DI/Extension.php
-
-	-
-		sniff: SlevomatCodingStandard.Classes.ForbiddenPublicProperty.ForbiddenPublicProperty
-		message: Do not use public properties. Use method access instead.
-		count: 2
-		path: src/Tracy/BarPanel.php
-
-	-
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
@@ -154,4 +130,3 @@ ignoreErrors:
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
 		path: src/Tracy/QueryDumpers/SqlFormatter.php
-
