@@ -11,7 +11,7 @@
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
 			<property name="rootNamespaces" type="array">
-				<element key="src" value="Forrest79\PhPgSql"/>
+				<element key="src" value="Forrest79\PhPgSql\Tracy"/>
 			</property>
 		</properties>
 	</rule>

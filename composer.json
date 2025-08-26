@@ -28,7 +28,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Forrest79\\PhPgSql\\": "src/"
+			"Forrest79\\PhPgSql\\Tracy\\": "src/"
 		}
 	},
 	"scripts": {
