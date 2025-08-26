@@ -12,10 +12,10 @@ parameters:
 	ignoreErrors:
 		-
 			message: '#Parameter \#2 \$parameters of method Forrest79\\PhPgSql\\Tracy\\QueryDumper::dump\(\) expects array\<int, mixed\>, array given\.#'
-			path: %rootDir%/../../../src/Tracy/BarPanel.php
+			path: %rootDir%/../../../src/BarPanel.php
 			count: 1
 
 		-
 			message: '#Parameter \#1 \$parameters of static method Forrest79\\PhPgSql\\Tracy\\Helper::dumpParameters\(\) expects list\<mixed\>, array given\.#'
-			path: %rootDir%/../../../src/Tracy/BarPanel.php
+			path: %rootDir%/../../../src/BarPanel.php
 			count: 1
