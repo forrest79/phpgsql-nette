@@ -12,7 +12,7 @@
 	],
 	"require": {
 		"php": "^8.3",
-		"forrest79/phpgsql": "^2.0",
+		"forrest79/phpgsql": "2.x-dev",
 		"tracy/tracy": "^2.10"
 	},
 	"require-dev": {
