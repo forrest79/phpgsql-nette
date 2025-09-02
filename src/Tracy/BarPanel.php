@@ -7,9 +7,7 @@ use Tracy;
 
 class BarPanel implements Tracy\IBarPanel
 {
-	public static bool $disabled = false;
-
-	public static int $showMaxLastQueries = 1000;
+	private const int DEFAULT_SHOW_MAX_LAST_QUERIES = 1000;
 
 	private PhPgSql\Db\Connection $connection;
 
@@ -20,6 +18,11 @@ class BarPanel implements Tracy\IBarPanel
 	private float|null $longQueryTimeMs;
 
 	private bool $detectRepeatingQueries;
+
+	private int $showMaxLastQueries;
+
+	/** @var \Closure(string $class, string $function): bool */
+	private \Closure $backtraceContinueIterate;
 
 	private float $totalTimeMs = 0;
 
@@ -42,9 +45,14 @@ class BarPanel implements Tracy\IBarPanel
 	/** @var list<array{0: PhPgSql\Db\Query, 1: list<string>}>|null */
 	private array|null $nonParsedColumnsQueries = null;
 
-	private bool $disableLogQuery = false;
+	private bool $disabled = false;
+
+	private bool $temporaryDisabled = false;
 
 
+	/**
+	 * @param (callable(string $class, string $function): bool)|null $backtraceContinueIterate
+	 */
 	final public function __construct(
 		PhPgSql\Db\Connection $connection,
 		PhPgSql\Tracy\QueryDumper $queryDumper,
@@ -54,6 +62,8 @@ class BarPanel implements Tracy\IBarPanel
 		float|null $longQueryTimeMs = null,
 		bool $detectRepeatingQueries = false,
 		bool $detectNonParsedColumns = false,
+		callable|null $backtraceContinueIterate = null,
+		int|null $showMaxLastQueries = null,
 	)
 	{
 		$connection->addOnQuery(function (PhPgSql\Db\Connection $connection, PhPgSql\Db\Query $query, float|null $timeNs = null) use ($explain): void {
@@ -80,12 +90,14 @@ class BarPanel implements Tracy\IBarPanel
 		$this->name = $name;
 		$this->longQueryTimeMs = $longQueryTimeMs;
 		$this->detectRepeatingQueries = $detectRepeatingQueries;
+		$this->backtraceContinueIterate = \Closure::fromCallable($backtraceContinueIterate ?? static fn (): bool => false);
+		$this->showMaxLastQueries = $showMaxLastQueries ?? self::DEFAULT_SHOW_MAX_LAST_QUERIES;
 	}
 
 
-	public function logQuery(PhPgSql\Db\Query $query, float|null $timeNs, bool $explain): void
+	private function logQuery(PhPgSql\Db\Query $query, float|null $timeNs, bool $explain): void
 	{
-		if (self::$disabled || $this->disableLogQuery) {
+		if ($this->disabled || $this->temporaryDisabled) {
 			return;
 		}
 
@@ -101,8 +113,8 @@ class BarPanel implements Tracy\IBarPanel
 			$this->longQueryCount++;
 		}
 
-		if ($this->detectRepeatingQueries && (\preg_match('#^\s*(BEGIN|COMMIT|ROLLBACK|SET)#i', $query->getSql()) === 0)) {
-			$this->queriesCount[$query->getSql()] = ($this->queriesCount[$query->getSql()] ?? 0) + 1;
+		if ($this->detectRepeatingQueries && (\preg_match('#^\s*(BEGIN|COMMIT|ROLLBACK|SET)#i', $query->sql) === 0)) {
+			$this->queriesCount[$query->sql] = ($this->queriesCount[$query->sql] ?? 0) + 1;
 		}
 
 		$source = null;
@@ -116,7 +128,7 @@ class BarPanel implements Tracy\IBarPanel
 				&& !(\is_a($class, PhPgSql\Db\Transaction::class, true) && \in_array($function, ['begin', 'commit', 'rollback', 'savepoint', 'releaseSavepoint', 'rollbackToSavepoint'], true))
 				&& !(\is_a($class, PhPgSql\Db\Connection::class, true) && \in_array($function, ['query', 'queryArgs', 'execute', 'asyncQuery', 'asyncQueryArgs', 'asyncExecute'], true))
 				&& !(\is_a($class, PhPgSql\Fluent\QueryExecute::class, true) && \in_array($function, ['execute', 'fetch', 'fetchAll', 'fetchAssoc', 'fetchPairs', 'fetchSingle', 'fetchIterator'], true))
-				&& !static::backtraceContinueIterate($class, $function)
+				&& !\call_user_func($this->backtraceContinueIterate, $class, $function)
 			) {
 				break;
 			}
@@ -133,18 +145,9 @@ class BarPanel implements Tracy\IBarPanel
 	}
 
 
-	/**
-	 * Can be over-written with custom logic to ignore concrete class and function in backtrace to show the most appropriate file/line in source code.
-	 */
-	protected static function backtraceContinueIterate(string $class, string $function): bool
-	{
-		return false;
-	}
-
-
 	private function logNotices(PhPgSql\Db\Connection $connection): void
 	{
-		if (self::$disabled) {
+		if ($this->disabled) {
 			return;
 		}
 
@@ -171,21 +174,22 @@ class BarPanel implements Tracy\IBarPanel
 	 */
 	private function explain(PhPgSql\Db\Query $query): array|null
 	{
-		$sql = $query->getSql();
+		$sql = $query->sql;
 
 		if (\preg_match('#\s*\(?\s*SELECT\s#iA', $sql) === 0) {
 			return null;
 		}
 
-		$explainQuery = new PhPgSql\Db\Sql\Query('EXPLAIN ' . $sql, $query->getParams());
+		$explainQuery = new PhPgSql\Db\Sql\Query('EXPLAIN ' . $sql, $query->params);
+
+		$this->temporaryDisabled = true;
 
 		try {
-			$this->disableLogQuery = true;
 			$explain = $this->connection->query($explainQuery)->fetchAll();
 		} catch (PhPgSql\Db\Exceptions\QueryException) {
 			$explain = null;
 		} finally {
-			$this->disableLogQuery = false;
+			$this->temporaryDisabled = false;
 		}
 
 		return $explain;
@@ -222,7 +226,7 @@ class BarPanel implements Tracy\IBarPanel
 		$name = $this->name;
 		$count = $this->count;
 		$totalTimeMs = $this->totalTimeMs;
-		$queries = \array_slice($this->queries, -1 * self::$showMaxLastQueries);
+		$queries = \array_slice($this->queries, -1 * $this->showMaxLastQueries);
 
 		$longQueryTimeMs = $this->longQueryTimeMs;
 
@@ -288,7 +292,17 @@ class BarPanel implements Tracy\IBarPanel
 	}
 
 
+	public function disable(): void
+	{
+		$this->disabled = false;
+	}
+
+
+	/**
+	 * @param (callable(string $class, string $function): bool)|null $backtraceContinueIterate
+	 */
 	public static function initialize(
+		Tracy\Bar $tracyBar,
 		PhPgSql\Db\Connection $connection,
 		PhPgSql\Tracy\QueryDumper $queryDumper,
 		string $name,
@@ -297,10 +311,23 @@ class BarPanel implements Tracy\IBarPanel
 		float|null $longQueryTimeMs = null,
 		bool $detectRepeatingQueries = false,
 		bool $detectNonParsedColumns = false,
+		callable|null $backtraceContinueIterate = null,
+		int|null $showMaxLastQueries = null,
 	): self
 	{
-		$panel = new static($connection, $queryDumper, $name, $explain, $notices, $longQueryTimeMs, $detectRepeatingQueries, $detectNonParsedColumns);
-		Tracy\Debugger::getBar()->addPanel($panel);
+		$panel = new static(
+			$connection,
+			$queryDumper,
+			$name,
+			$explain,
+			$notices,
+			$longQueryTimeMs,
+			$detectRepeatingQueries,
+			$detectNonParsedColumns,
+			$backtraceContinueIterate,
+			$showMaxLastQueries,
+		);
+		$tracyBar->addPanel($panel);
 		return $panel;
 	}
 

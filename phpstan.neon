@@ -11,16 +11,6 @@ parameters:
 
 	ignoreErrors:
 		-
-			message: '#Parameter \#1 \$config of method Forrest79\\PhPgSql\\Nette\\DI\\Extension::setupDatabase\(\) expects array\<string, mixed\>, array given\.#'
-			path: %rootDir%/../../../src/Nette/DI/Extension.php
-			count: 1
-
-		-
-			message: '#Using \(array\) is discouraged, please avoid using that\.#'
-			path: %rootDir%/../../../src/Nette/DI/Extension.php
-			count: 3
-
-		-
 			message: '#Parameter \#2 \$parameters of method Forrest79\\PhPgSql\\Tracy\\QueryDumper::dump\(\) expects array\<int, mixed\>, array given\.#'
 			path: %rootDir%/../../../src/Tracy/BarPanel.php
 			count: 1
@@ -28,10 +18,4 @@ parameters:
 		-
 			message: '#Parameter \#1 \$parameters of static method Forrest79\\PhPgSql\\Tracy\\Helper::dumpParameters\(\) expects list\<mixed\>, array given\.#'
 			path: %rootDir%/../../../src/Tracy/BarPanel.php
-			count: 1
-
-		# === This is OK for PHP >= 8.0 ===
-		-
-			message: '#Call to an undefined method ReflectionType::getName\(\)\.#'
-			path: %rootDir%/../../../src/Nette/DI/Extension.php
 			count: 1

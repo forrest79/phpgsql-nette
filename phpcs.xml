@@ -12,7 +12,6 @@
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="src" value="Forrest79\PhPgSql"/>
-				<element key="tests" value="Forrest79\PhPgSql\Tests"/>
 			</property>
 		</properties>
 	</rule>

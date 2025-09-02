@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Tracy;
 use Forrest79\PhPgSql;
 use Tracy;
 
-class BluescreenPanel
+class BlueScreenPanel
 {
 	private PhPgSql\Tracy\QueryDumper $queryDumper;
 
@@ -31,12 +31,12 @@ class BluescreenPanel
 		}
 
 		$parameters = '';
-		$params = $query->getParams();
-		if ($params !== []) {
+		$queryParams = $query->params;
+		if ($queryParams !== []) {
 			$parameters = \sprintf('
 				<h3>Parameters:</h3>
 				<pre class="phpgsql-bluescreen-panel">%s</pre>
-			', Helper::dumpParameters($params));
+			', Helper::dumpParameters($queryParams));
 		}
 
 		return [
@@ -49,15 +49,16 @@ class BluescreenPanel
 
 				<h3>Binded query:</h3>
 				<pre>%s</pre>
-			', $this->queryDumper->dump($query->getSql()), $parameters, $this->queryDumper->dump($query->getSql(), $query->getParams())),
+			', $this->queryDumper->dump($query->sql), $parameters, $this->queryDumper->dump($query->sql, $query->params)),
 		];
 	}
 
 
-	public static function initialize(PhPgSql\Tracy\QueryDumper $queryDumper): void
+	public static function initialize(Tracy\BlueScreen $tracyBlueScreen, PhPgSql\Tracy\QueryDumper $queryDumper): void
 	{
-		Tracy\Debugger::getBlueScreen()->addPanel(static function (\Throwable|null $e) use ($queryDumper): array|null {
-			return (new static($queryDumper))->renderException($e);
+		$panel = new static($queryDumper);
+		$tracyBlueScreen->addPanel(static function (\Throwable|null $e) use ($panel): array|null {
+			return $panel->renderException($e);
 		});
 	}
 

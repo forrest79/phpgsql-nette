@@ -55,8 +55,8 @@ database:
     async: true # default is false, when true, connection is made in async way, and it's not blocking the next PHP code execution (before the first query is run, a library is waiting for active connection)
     lazy: false # default is true, when false, connection is made right after the Connection object is created, when true, connection is made with the first query
     autowired: false # default is true (for second and next connection is always false)
-    debugger: false # default is true (when true, the exception panel on Bluescreen is added, and Tracy bar is shown in debug mode)
-    tracyBluescreenPanelClass: App\PhPgSql\MyOwnTracy\BarPanel # default is Forrest79\PhPgSql\Tracy\BluescreenPanel (you can use your own Tracy bluescreen panel class)
+    debugger: false # default is true (when true, the exception panel on BlueScreen is added, and Tracy bar is shown in debug mode)
+    tracyBluescreenPanelClass: App\PhPgSql\MyOwnTracy\BarPanel # default is Forrest79\PhPgSql\Tracy\BlueScreenPanel (you can use your own Tracy bluescreen panel class)
     tracyBarPanelClass: App\PhPgSql\MyOwnTracy\BarPanel # default is Forrest79\PhPgSql\Tracy\BarPanel (you can use your own Tracy bar panel class)
     queryDumper: false # default is null (when false, no query dumper is used, and all SQL queries are displayed as it is, when null - auto-detection is used - when Doctrine\Sql-Formatter is installed, it is used, when not, internal basic formatter is used or use own service via @serviceName)
     explain: true # default is false (when true, if the Tracy panel is enabled, explain is shown for every query)
@@ -155,7 +155,7 @@ Where `default` is connection name.
 
 ## Query dumper
 
-SQL queries are dumped in `Tracy\Bar` and in `Tracy\Bluescreen` and you can use different dumpers/formatters. Three are included:
+SQL queries are dumped in `Tracy\Bar` and in `Tracy\BlueScreen` and you can use different dumpers/formatters. Three are included:
 - `PhPgSql\Tracy\QueryDumpers\NullDumper` - show SQL query as it is, it is used when `queryDumper: false` is set
 - `PhPgSql\Tracy\QueryDumpers\Basic` - highlight and format SQL query with basic internal formatter, it is used when `queryDumper: null` and `Doctrine\Sql-Formatter` is not installed
 - `PhPgSql\Tracy\QueryDumpers\SqlFormatter` - highlight and format SQL query with [Doctrine\Sql-Formatter](https://github.com/doctrine/sql-formatter), it is used when `queryDumper: null` and `Doctrine\Sql-Formatter` is installed

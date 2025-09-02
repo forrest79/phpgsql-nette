@@ -93,7 +93,7 @@ use Tracy\Helpers;
 			foreach ($queries as $query):
 				[$sql, $timeMs, $explain, $source] = $query;
 
-				$hasParams = ($sql instanceof PhPgSql\Db\Query) && ($sql->getParams() !== []);
+				$hasParams = ($sql instanceof PhPgSql\Db\Query) && ($sql->params !== []);
 		?>
 			<tr>
 				<td>
@@ -132,7 +132,7 @@ use Tracy\Helpers;
 					<?php endif ?>
 				</td>
 				<td class="phpgsql-panel-sql">
-					<span data-sql-query><?php echo ($sql instanceof PhPgSql\Db\Query) ? $queryDump($sql->getSql()) : $sql; ?></span>
+					<span data-sql-query><?php echo ($sql instanceof PhPgSql\Db\Query) ? $queryDump($sql->sql) : $sql; ?></span>
 					<?php if ($hasParams): ?>
 						<table class="tracy-collapsed phpgsql-panel-binded">
 							<tr>
@@ -141,7 +141,7 @@ use Tracy\Helpers;
 								</th>
 							</tr>
 							<tr>
-								<td data-binded-sql-query><?php echo $queryDump($sql->getSql(), $sql->getParams()); ?></td>
+								<td data-binded-sql-query><?php echo $queryDump($sql->sql, $sql->params); ?></td>
 							</tr>
 						</table>
 					<?php endif ?>
@@ -160,7 +160,7 @@ use Tracy\Helpers;
 					} ?>
 				</td>
 				<td>
-					<?php if ($hasParams) echo $paramsDump($sql->getParams()); ?>
+					<?php if ($hasParams) echo $paramsDump($sql->params); ?>
 				</td>
 			</tr>
 		<?php endforeach ?>
@@ -198,10 +198,10 @@ use Tracy\Helpers;
 			?>
 				<tr>
 					<td class="phpgsql-panel-sql">
-						<?php echo $queryDump($query->getSql()); ?>
+						<?php echo $queryDump($query->sql); ?>
 					</td>
 					<td>
-						<?php if ($query->getParams() !== []) echo $paramsDump($query->getParams()); ?>
+						<?php if ($query->params !== []) echo $paramsDump($query->params); ?>
 					</td>
 					<td>
 						<pre><?php echo \implode(PHP_EOL, $nonParsedColumns); ?></pre>

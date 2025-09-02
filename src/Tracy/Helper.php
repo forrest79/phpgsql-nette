@@ -12,31 +12,21 @@ class Helper
 	 */
 	public static function dumpParameters(array $parameters): string
 	{
+		$dumpParameters = [];
+
+		$i = 1;
+		foreach ($parameters as $param) {
+			$dumpParameters['$' . $i++] = $param;
+		}
+
 		return Tracy\Dumper::toHtml(
-			self::prepareParameters($parameters),
+			$dumpParameters,
 			[
 				Tracy\Dumper::LAZY => false,
 				Tracy\Dumper::DEPTH => Tracy\Debugger::$maxDepth,
 				Tracy\Dumper::TRUNCATE => Tracy\Debugger::$maxLength,
 			],
 		);
-	}
-
-
-	/**
-	 * @param list<mixed> $params
-	 * @return array<string, mixed>
-	 */
-	private static function prepareParameters(array $params): array
-	{
-		$printParams = [];
-
-		$i = 1;
-		foreach ($params as $param) {
-			$printParams['$' . $i++] = $param;
-		}
-
-		return $printParams;
 	}
 
 }
