@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="PhPgSql-Nette">
+<ruleset name="PhPgSql-Tracy">
 	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset-fully-qualified-global.xml">
 		<exclude name="SlevomatCodingStandard.TypeHints.ClassConstantTypeHint.MissingNativeTypeHint"/><!-- PHP 8.3+ -->
 	</rule>
