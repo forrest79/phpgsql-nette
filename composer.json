@@ -1,7 +1,7 @@
 {
-	"name": "forrest79/phpgsql-nette",
-	"description": "PhPgSql implementation into Nette Framework.",
-	"keywords": ["phpgsql", "nette", "database", "postgresql"],
+	"name": "forrest79/phpgsql-tracy",
+	"description": "Use PhPgSql with Tracy from Nette Framework.",
+	"keywords": ["phpgsql", "tracy", "nette", "database", "postgresql"],
 	"type": "library",
 	"license": "BSD-3-Clause",
 	"authors": [
